@@ -40,32 +40,35 @@ const Hero = () => {
         </p>
       </div>
       <div className="w-full h-full absolute inset-0 ">
-          {/* <Leva /> */}
+        {/* <Leva /> */}
         <Canvas className="w-full h-full">
           <Suspense fallback={<CanvasLoader />} />
           <PerspectiveCamera makeDefault position={[0, 0, 20]} />
           <HeroCamera isMobile={isMobile}>
-
-          <HackerRoom
-            scale={sizes.deskScale}
-            position={sizes.deskPosition}
-            rotation={[0, -Math.PI, 0]}
+            <HackerRoom
+              scale={sizes.deskScale}
+              position={sizes.deskPosition}
+              rotation={[0, -Math.PI, 0]}
             />
-            </HeroCamera>
+          </HeroCamera>
           <group>
-            <Target position={sizes.targetPosition}/>
-            <ReactLogo position={sizes.reactLogoPosition}/>
-            <Cube position={sizes.cubePosition}/>
-            <Rings position={sizes.ringPosition}/>
+            <Target position={sizes.targetPosition} />
+            <ReactLogo position={sizes.reactLogoPosition} />
+            <Cube position={sizes.cubePosition} />
+            <Rings position={sizes.ringPosition} />
           </group>
           <ambientLight intensity={1} />
           <directionalLight position={[10, 10, 10]} />
         </Canvas>
       </div>
       <div className="absolute bottom-7 left-0 right-0 w-full z-10 c-space">
-        <a href="#contact" className="w-fit">
-            <Button name="Let's work together" isBeam containerClass="sm:w-fit w-full sm:min-w-[96px]"/>
-             </a>
+        <a href="#about" className="w-fit">
+          <Button
+            name="Let's work together"
+            isBeam
+            containerClass="sm:w-fit w-full sm:min-w-[96px]"
+          />
+        </a>
       </div>
     </section>
   );
