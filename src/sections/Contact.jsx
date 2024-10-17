@@ -1,11 +1,18 @@
+import React, { useRef, useState, useEffect } from "react";
 import emailjs from "@emailjs/browser";
-import { useRef, useState } from "react";
 
 import useAlert from "../hooks/useAlert.js";
 import Alert from "../components/Alert.jsx";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "@studio-freight/lenis";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Contact = () => {
   const formRef = useRef();
+
+  const tileRef = useRef();
 
   const { alert, showAlert, hideAlert } = useAlert();
   const [loading, setLoading] = useState(false);
@@ -64,11 +71,53 @@ const Contact = () => {
       );
   };
 
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.4, // Adjust the duration for smooth scrolling
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Customize easing
+      smoothWheel: true,
+      smoothTouch: false,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    gsap.fromTo(
+      tileRef.current,
+      { y: 400, opacity: 0, scale: 0.4 },
+      {
+        y: 0,
+        scale: 1,
+        opacity: 1,
+        duration: 1.5,
+        // ease: "power3.out",
+        ease: "power4.out",
+        scrollTrigger: {
+          trigger: tileRef.current,
+          start: "top 100%",
+          end: "top 10%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
   return (
     <section className="c-space my-20" id="contact">
       {alert.show && <Alert {...alert} />}
 
-      <div className="relative min-h-screen flex items-center justify-center flex-col">
+      <div
+        ref={tileRef}
+        className="relative min-h-screen flex items-center justify-center flex-col"
+      >
         <img
           src="/assets/terminal.png"
           alt="terminal-bg"
@@ -76,7 +125,7 @@ const Contact = () => {
         />
 
         <div className="contact-container">
-          <h3 className="head-text">Let's talk</h3>
+          <h3 className="head-text mt-14">Let's talk</h3>
           <p className="text-lg text-white-600 mt-3">
             Whether you’re looking to build a new website, improve your existing
             platform, or bring a unique project to life, I’m here to help.

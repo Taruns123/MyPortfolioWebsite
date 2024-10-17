@@ -7,6 +7,20 @@
 * {
   scroll-behavior: smooth;
 }
+::-webkit-scrollbar {
+  position: relative;
+  width: 10px;
+  height: 8px;
+  background-color: transparent;
+  /* or add it to the track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #3f3e3e;
+  opacity: 0.4;
+  width: 10px;
+  border-radius: 20px 0 0 20px;
+}
 
 body {
   background: #010103;
@@ -15,6 +29,7 @@ body {
 
 @layer utilities {
   .c-space {
+    
     @apply sm:px-10 px-5;
   }
 
