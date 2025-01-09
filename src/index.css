@@ -4,8 +4,39 @@
 @tailwind components;
 @tailwind utilities;
 
+svg {
+  max-width: 600px;
+  overflow: visible;
+  margin-top: 60vh;
+}
+
+.ball {
+  fill: white;
+  visibility: hidden;
+}
+
+.line {
+  fill: none;
+  stroke: white;
+  stroke-width: 2px;
+}
 * {
+  /* font-family: "ＭＳ Ｐゴシック"; */
   scroll-behavior: smooth;
+}
+::-webkit-scrollbar {
+  position: relative;
+  width: 10px;
+  height: 8px;
+  background-color: transparent;
+  /* or add it to the track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #3f3e3e;
+  opacity: 0.4;
+  width: 10px;
+  border-radius: 20px 0 0 20px;
 }
 
 body {
@@ -15,6 +46,7 @@ body {
 
 @layer utilities {
   .c-space {
+    
     @apply sm:px-10 px-5;
   }
 
@@ -62,7 +94,7 @@ body {
 
   /* about section */
   .grid-container {
-    @apply w-full h-full border border-black-300 bg-black-200 rounded-lg sm:p-7 p-4 flex flex-col gap-5;
+    @apply w-full h-full border border-black-300 bg-black-200/50 backdrop-blur-lg rounded-lg sm:p-7 p-4 flex flex-col gap-5;
   }
 
   .grid-headtext {
