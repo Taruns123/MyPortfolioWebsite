@@ -112,7 +112,7 @@ const Contact = () => {
 
   return (
     <section className="c-space my-20" id="contact">
-      {alert.show && <Alert {...alert} />}
+      {/* {alert.show && <Alert {...alert} />}
 
       <div
         ref={tileRef}
@@ -186,7 +186,7 @@ const Contact = () => {
             </button>
           </form>
         </div>
-      </div>
+      </div> */}
     </section>
   );
 };

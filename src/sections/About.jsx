@@ -47,7 +47,8 @@ const About = () => {
       {
         x: 0,
         scale: 1,
-        opacity: 1,
+        opacity: 0.95,
+        // backdropFilter: "blur(5px)",
         duration: 3,
         ease: "power3.out",
         scrollTrigger: {
@@ -66,7 +67,7 @@ const About = () => {
       {
         x: 0,
         scale: 1,
-        opacity: 1,
+        opacity: 0.95,
         duration: 2.5,
         ease: "power3.out",
         scrollTrigger: {
@@ -84,7 +85,7 @@ const About = () => {
       { x: 500, opacity: 0 },
       {
         x: 0,
-        opacity: 1,
+        opacity: 0.95,
         duration: 3.2,
         ease: "power3.out",
         scrollTrigger: {
@@ -101,7 +102,7 @@ const About = () => {
       { x: -500, opacity: 0 },
       {
         x: 0,
-        opacity: 1,
+        opacity: 0.95,
         duration: 3,
         ease: "power3.out",
         scrollTrigger: {
@@ -118,7 +119,7 @@ const About = () => {
       { x: 500, opacity: 0 },
       {
         x: 0,
-        opacity: 1,
+        opacity: 0.95,
         duration: 3,
         ease: "power3.out",
         scrollTrigger: {
@@ -139,14 +140,15 @@ const About = () => {
   return (
     <section className="c-space my-20 overflow-hidden" id="about">
       <div className="grid xl:grid-cols-3 xl:grid-rows-6 md:grid-cols-2 grid-cols-1 gap-5 h-full">
-        <div className="col-span-1 xl:row-span-3 intro">
-          <div ref={introRef} className="grid-container">
+        <div
+          className="col-span-1 xl:row-span-3 intro rounded-lg shadow-lg"
+        >
+          <div   ref={introRef} className="grid-container p-5 ">
             <img
               src="assets/grid1.png"
               alt="grid-1"
               className="w-full sm:h-[276px] h-fit object-contain"
             />
-
             <div>
               <p className="grid-headtext">Hi, I’m Tarun Shetty</p>
               <p className="grid-subtext">

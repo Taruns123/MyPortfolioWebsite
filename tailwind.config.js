@@ -26,6 +26,10 @@ export default {
       backgroundImage: {
         terminal: "url('/assets/terminal.png')",
       },
+      backdropBlur: {
+        sm: '4px',
+        md: '10px',
+      }
     },
   },
   plugins: [],

@@ -42,10 +42,14 @@ const Developer = ({ animationName = "idle", ...props }) => {
     group
   );
 
-  const t2 = "assets/vectorconsulting.png";
-  const t1 = "assets/pixolo_logo.png";
+  const t2 = "assets/vc_tshirt_logo.png";
+  const t1 = "assets/pixolo_logo_tshirt.png";
   const tshirt = useTexture(t1);
   const tshirt2 = useTexture(t2);
+  tshirt.offset.setX(0.25);
+  tshirt.offset.setY(0);
+  tshirt2.offset.setX(0.25);
+  tshirt2.offset.setY(0);
 
   useEffect(() => {
     actions[animationName].reset().fadeIn(0.5).play();
