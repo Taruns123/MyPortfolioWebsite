@@ -263,7 +263,7 @@ export const navLinks = [
       name: 'Pixolo',
       pos: 'Software Developer Intern',
       duration: 'Nov 2023 - Feb 2024',
-      title: "Framer serves as my go-to tool for creating interactive prototypes. I use it to bring designs to  life, allowing stakeholders to experience the user flow and interactions before development.",
+      title: "Worked as a software developer on multiple projects, primarily with Angular and Next.js, showcasing strong UI design skills. Contributed to real-world production applications, gaining hands-on experience, problem-solving abilities, and delivering scalable, user-friendly solutions. This first professional role built a solid foundation for my technical expertise and adaptability in dynamic environments.",
       icon: '/assets/pixolo_logo.png',
       animation: 'salute',
     },
@@ -272,7 +272,7 @@ export const navLinks = [
       name: 'Vector Consulting',
       pos: 'Software Developer',
       duration: 'June 2024 - Present',
-      title: "Figma is my collaborative design platform of choice. I utilize it to work seamlessly with team members and clients, facilitating real-time feedback and design iterations. Its cloud-based.",
+      title: "Played a versatile role in developing a modern Make-to-Order supply chain project, successfully launched. Specialized in React frontend development, leveraging core concepts, advanced UI design, and unit testing. Streamlined development and deployment by implementing Azure DevOps pipelines, showcasing adaptability and a comprehensive approach to delivering high-quality applications.",
       icon: '/assets/vectorconsulting.png',
       animation: 'clapping',
     }

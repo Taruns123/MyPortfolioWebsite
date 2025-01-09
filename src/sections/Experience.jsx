@@ -24,18 +24,35 @@ const WorkExperience = () => {
           end: "bottom top",
           scrub: true,
           onUpdate: (self) => {
-            if (self.progress >= 0.7) {
-              // When scroll reaches near the end, switch to typing
-              setAnimation("Typing");
-            } else {
-              // During the scroll down, use Falling animation
-              setAnimation("Falling");
+            // Direction of scroll is determined here:
+            // self.direction > 0 indicates scrolling down
+            // self.direction < 0 indicates scrolling up
+            if(self.direction>0){
+
+              if (self.progress >= 0.7) {
+                // When scroll reaches near the end, switch to typing
+                setAnimation("Typing");
+              } else {
+                // During the scroll down, use Falling animation
+                setAnimation("Falling");
+              }
+            }
+            else{
+              if (self.progress >= 0.7) {
+                // When scroll reaches near the end, switch to typing
+                setAnimation("Typing");
+              } else {
+                // During the scroll down, use Falling animation
+                setAnimation("Standing");
+              }
+
             }
           },
         },
       });
+  
 
-      timeline
+        timeline
         // Falling animation: Avatar moves downward
         .to(
           avatarRef.current.position,
@@ -43,28 +60,59 @@ const WorkExperience = () => {
             x: -0.5, // Final x position
             y: -5.05, // Final y position
             z: -0.9, // Final z position
-            duration: 1.5,
-            onStart: () => {
-              setAnimation("Falling");
-              // Add slight rotation and scale during the fall
-              gsap.to(avatarRef.current.rotation, {
-                x: -Math.PI / 6+ 1, // Slight tilt forward
-                z: 0,
-                y: -3.2,
-                duration: 1.5,
-              });
-              gsap.to(avatarRef.current.scale, {
-                x: 1.8,
-                y: 1.8,
-                z: 1.8,
-                duration: 1.5,
-              });
-            },
+            duration: 2,
+            // onStart: () => {
+
+            //     setAnimation("Falling");
+            //     // Add slight rotation and scale during the fall
+                
+            //     gsap.to(avatarRef.current.rotation, {
+            //       x: -Math.PI / 6 + 1, // Slight tilt forward
+            //       z: 0,
+            //       y: -3.2,
+            //       duration: 1.5,
+            //     });
+            //     gsap.to(avatarRef.current.scale, {
+            //       x: 1.8,
+            //       y: 1.8,
+            //       z: 1.8,
+            //       duration: 1.5,
+            //     });
+              
+            // },
           },
           0
-        );
+          );
+
+        timeline
+        // Falling animation: Avatar moves downward
+        .to(
+          avatarRef.current.rotation,
+          {
+            x: -Math.PI / 6 + 1, // Slight tilt forward
+            z: 0,
+            y: -3.2,
+            duration: 2,
+          },
+          0
+          );
+
+        timeline
+        // Falling animation: Avatar moves downward
+        .to(
+          avatarRef.current.scale,
+          {
+            x: 1.8,
+            y: 1.8,
+            z: 1.8,
+            duration: 2,
+          },
+          0
+          );
+        
     }
   }, [avatarRef.current]);
+  
   
   return (
     <section className="c-space my-20" id="work">
@@ -140,7 +188,7 @@ const WorkExperience = () => {
                     <p className="text-sm mb-5">
                       {item.pos} -- <span>{item.duration}</span>
                     </p>
-                    <p className="group-hover:text-white transition-all ease-in-out duration-500">
+                    <p className="group-hover:text-white text-sm transition-all ease-in-out duration-500">
                       {item.title}
                     </p>
                   </div>

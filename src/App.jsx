@@ -98,7 +98,7 @@ const App = () => {
    
           "
           fill="none"
-          stroke="blue"
+          stroke="#0039a6"
           strokeWidth="25px"
           ref={lineRef}
           strokeLinecap="round"

@@ -112,25 +112,25 @@ const Contact = () => {
 
   return (
     <section className="c-space my-20" id="contact">
-      {/* {alert.show && <Alert {...alert} />}
-
+      {alert.show && <Alert {...alert} />}
+  
       <div
         ref={tileRef}
-        className="relative min-h-screen flex items-center justify-center flex-col"
+        className="relative min-h-screen flex items-end justify-end flex-col pr-10" // Adjusted alignment classes
       >
         <img
           src="/assets/terminal.png"
           alt="terminal-bg"
           className="absolute inset-0 min-h-screen"
         />
-
-        <div className="contact-container">
+  
+        <div className="contact-container text-left"> {/* Align text to the right */}
           <h3 className="head-text mt-14">Let's talk</h3>
           <p className="text-lg text-white-600 mt-3">
             Whether you’re looking to build a new website, improve your existing
             platform, or bring a unique project to life, I’m here to help.
           </p>
-
+  
           <form
             ref={formRef}
             onSubmit={handleSubmit}
@@ -148,7 +148,7 @@ const Contact = () => {
                 placeholder="ex., John Doe"
               />
             </label>
-
+  
             <label className="space-y-3">
               <span className="field-label">Email address</span>
               <input
@@ -161,7 +161,7 @@ const Contact = () => {
                 placeholder="ex., johndoe@gmail.com"
               />
             </label>
-
+  
             <label className="space-y-3">
               <span className="field-label">Your message</span>
               <textarea
@@ -174,10 +174,10 @@ const Contact = () => {
                 placeholder="Share your thoughts or inquiries..."
               />
             </label>
-
-            <button className="field-btn" type="submit" disabled={loading}>
+  
+            <button className="field-btn ml-auto" type="submit" disabled={loading}>
               {loading ? "Sending..." : "Send Message"}
-
+  
               <img
                 src="/assets/arrow-up.png"
                 alt="arrow-up"
@@ -186,9 +186,10 @@ const Contact = () => {
             </button>
           </form>
         </div>
-      </div> */}
+      </div>
     </section>
   );
+  
 };
 
 export default Contact;
