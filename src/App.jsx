@@ -70,16 +70,18 @@ const App = () => {
   const [started, setStarted] = useState(false);
 
   return (
+    <>
     <main className="max-w-7xl mx-auto">
       <svg
         className="absolute top-0 left-0 right-0 z-[-10]  "
         id="svg"
         height={"550vh"}
+        opacity={0.4}
         width={"100vw"}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 220 3200" // Increased viewBox height
         ref={svgRef}
-      >
+        >
         <path
           className="theLine"
           d="M -200,-10 
@@ -95,14 +97,14 @@ const App = () => {
           Q 1150 1550 900 1500
           Q  500  1500 350 1800
           T -10 2300
-   
+          
           "
           fill="none"
           stroke="#0039a6"
           strokeWidth="25px"
           ref={lineRef}
           strokeLinecap="round"
-        />
+          />
       </svg>
       <LoadingScreen started={started} setStarted={setStarted} />
       {started && <Navbar />}
@@ -111,8 +113,9 @@ const App = () => {
       <Projects />
       <WorkExperience />
       <Contact />
-      <Footer />
     </main>
+      <Footer />
+          </>
   );
 };
 

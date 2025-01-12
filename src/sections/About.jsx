@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Button from "../components/Button.jsx";
 import Lenis from "@studio-freight/lenis";
+import Skills from "../components/Skills.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -47,7 +48,7 @@ const About = () => {
       {
         x: 0,
         scale: 1,
-        opacity: 0.95,
+        opacity: 0.97,
         // backdropFilter: "blur(5px)",
         duration: 3,
         ease: "power3.out",
@@ -67,7 +68,7 @@ const About = () => {
       {
         x: 0,
         scale: 1,
-        opacity: 0.95,
+        opacity: 0.97,
         duration: 2.5,
         ease: "power3.out",
         scrollTrigger: {
@@ -85,7 +86,7 @@ const About = () => {
       { x: 500, opacity: 0 },
       {
         x: 0,
-        opacity: 0.95,
+        opacity: 0.97,
         duration: 3.2,
         ease: "power3.out",
         scrollTrigger: {
@@ -102,7 +103,7 @@ const About = () => {
       { x: -500, opacity: 0 },
       {
         x: 0,
-        opacity: 0.95,
+        opacity: 0.97,
         duration: 3,
         ease: "power3.out",
         scrollTrigger: {
@@ -119,7 +120,7 @@ const About = () => {
       { x: 500, opacity: 0 },
       {
         x: 0,
-        opacity: 0.95,
+        opacity: 0.97,
         duration: 3,
         ease: "power3.out",
         scrollTrigger: {
@@ -162,11 +163,7 @@ const About = () => {
 
         <div className="col-span-1 xl:row-span-3">
           <div ref={secondLinkRef} className="grid-container">
-            <img
-              src="assets/grid2.png"
-              alt="grid-2"
-              className="w-full sm:h-[276px] h-fit object-contain"
-            />
+           <Skills/>
 
             <div>
               <p className="grid-headtext">Tech Stack</p>
@@ -212,7 +209,9 @@ const About = () => {
                 I&apos;m based in Mumbai, India and open to remote work
                 worldwide.
               </p>
-              <Button name="Contact Me" isBeam containerClass="w-full mt-10" />
+              <a href="#contact">
+      <Button name="Contact Me" isBeam containerClass="w-full mt-10" />
+    </a>
             </div>
           </div>
         </div>

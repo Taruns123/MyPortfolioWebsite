@@ -52,6 +52,7 @@ export default function Model() {
         font={"/fonts/PPNeueMontreal-Bold.otf"}
         position={[0, 0, -1]}
         fontSize={0.5}
+        fontWeight={800}
         color="white"
         anchorX="center"
         anchorY="middle"
