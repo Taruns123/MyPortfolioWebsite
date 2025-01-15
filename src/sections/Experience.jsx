@@ -38,10 +38,14 @@ const WorkExperience = () => {
               }
             }
             else{
-              if (self.progress >= 0.7) {
+              if (self.progress >= 0.8) {
                 // When scroll reaches near the end, switch to typing
                 setAnimation("Typing");
-              } else {
+              }
+              else if(self.progress >= 0.1 && self.progress<0.8){
+                setAnimation("Falling");
+              }
+               else {
                 // During the scroll down, use Falling animation
                 setAnimation("Standing");
               }
@@ -112,7 +116,8 @@ const WorkExperience = () => {
         
     }
   }, [avatarRef.current]);
-  
+
+  const [company, setCompany] = useState("vectorconsulting");  
   
   return (
     <section className="c-space my-20" id="work">
@@ -142,6 +147,7 @@ const WorkExperience = () => {
                       rotation-x={-0.8}
                       position={[-0.6,2, 0]} // Starting position (Avatar 1 position)
                       wireframe={false}
+                      company={company}
                     />
                   </group>
 
@@ -165,9 +171,10 @@ const WorkExperience = () => {
                 <div
                   key={index}
                   // onClick={() => setAnimationName(item.animation.toLowerCase())}
-                  // onPointerOver={() =>
-                  //   setAnimationName(item.animation.toLowerCase())
-                  // }
+                  onPointerOver={() =>
+                    setCompany(item.name.toLowerCase().replace(" ", ""))
+                  }
+                  onClick={() => setCompany(item.name.toLowerCase().replace(" ", ""))}
                   // onPointerOut={() => setAnimationName("idle")}
                   className="work-content_container group"
                 >

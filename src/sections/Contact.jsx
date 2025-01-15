@@ -90,18 +90,17 @@ const Contact = () => {
       tileRef.current,
       { y: 400, opacity: 0, scale: 0.4 },
       {
-        y: 0,
-        scale: 1,
-        opacity: 1,
-        duration: 1.5,
-        // ease: "power3.out",
-        ease: "power4.out",
-        scrollTrigger: {
-          trigger: tileRef.current,
-          start: "top 100%",
-          end: "top 10%",
-          toggleActions: "play none none none",
-        },
+      y: 0,
+      scale: 1,
+      opacity: 1,
+      duration: 2,
+      ease: "power4.out",
+      scrollTrigger: {
+        trigger: tileRef.current,
+        start: "top 100%", // Adjusted start position to trigger sooner
+        end: "top 50%",
+        toggleActions: "play none none none",
+      },
       }
     );
 

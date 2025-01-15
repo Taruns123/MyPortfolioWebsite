@@ -94,7 +94,7 @@ body {
 
   /* about section */
   .grid-container {
-    @apply w-full h-full border border-black-300 bg-black-200/50 backdrop-blur-lg rounded-lg sm:p-7 p-4 flex flex-col gap-5;
+    @apply w-full h-full border border-black-300 bg-black-200/70 backdrop-blur-md rounded-lg sm:p-7 p-4 flex flex-col gap-5;
   }
 
   .grid-headtext {
