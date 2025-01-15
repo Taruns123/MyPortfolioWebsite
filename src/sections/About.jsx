@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Button from "../components/Button.jsx";
 import Lenis from "@studio-freight/lenis";
 import Skills from "../components/Skills.jsx";
+import ProblemSolving from "../components/ProblemSolving.jsx";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -141,10 +142,8 @@ const About = () => {
   return (
     <section className="c-space my-20 overflow-hidden" id="about">
       <div className="grid xl:grid-cols-3 xl:grid-rows-6 md:grid-cols-2 grid-cols-1 gap-5 h-full">
-        <div
-          className="col-span-1 xl:row-span-3 intro rounded-lg shadow-lg"
-        >
-          <div   ref={introRef} className="grid-container p-5 ">
+        <div className="col-span-1 xl:row-span-3 intro rounded-lg shadow-lg">
+          <div ref={introRef} className="grid-container p-5">
             <img
               src="assets/grid1.png"
               alt="grid-1"
@@ -163,13 +162,12 @@ const About = () => {
 
         <div className="col-span-1 xl:row-span-3">
           <div ref={secondLinkRef} className="grid-container">
-           <Skills/>
-
+            <Skills />
             <div>
               <p className="grid-headtext">Tech Stack</p>
               <p className="grid-subtext">
                 I specialize in a variety of languages, frameworks, and tools
-                that allow me to build robust and scalable applications
+                that allow me to build robust and scalable applications.
               </p>
             </div>
           </div>
@@ -210,26 +208,23 @@ const About = () => {
                 worldwide.
               </p>
               <a href="#contact">
-      <Button name="Contact Me" isBeam containerClass="w-full mt-10" />
-    </a>
+                <Button name="Contact Me" isBeam containerClass="w-full mt-10" />
+              </a>
             </div>
           </div>
         </div>
 
         <div className="xl:col-span-2 xl:row-span-3">
           <div ref={techStackRef} className="grid-container">
-            <img
-              src="assets/grid3.png"
-              alt="grid-3"
-              className="w-full sm:h-[266px] h-fit object-contain"
-            />
-
+            <ProblemSolving />
             <div>
               <p className="grid-headtext">My Passion for Coding</p>
               <p className="grid-subtext">
                 I love solving problems and building things through code.
                 Programming isn&apos;t just my profession—it&apos;s my passion.
-                I enjoy exploring new technologies, and enhancing my skills.
+                I have achieved high ratings across various coding platforms
+                and have solved over <strong> 500+</strong> problems. I enjoy exploring new
+                technologies and continuously enhancing my skills.
               </p>
             </div>
           </div>
@@ -242,7 +237,6 @@ const About = () => {
               alt="grid-4"
               className="w-full md:h-[126px] sm:h-[276px] h-fit object-cover sm:object-top"
             />
-
             <div className="space-y-2">
               <p className="grid-subtext text-center">Contact me</p>
               <div className="copy-container" onClick={handleCopy}>

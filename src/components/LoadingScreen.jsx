@@ -55,7 +55,7 @@ export const LoadingScreen = (props) => {
   ${started ? "opacity-0" : "opacity-100"}`}
     >
       <div
-        className="text-4xl md:text-9xl font-extrabold text-indigo-900 relative h-30 md:h-58"
+        className="text-4xl md:text-9xl font-extrabold text-[#0039a6] relative h-30 md:h-58"
         style={{ fontFamily: "PPNeueMontreal-Bold, sans-serif" }}
       >
         <div

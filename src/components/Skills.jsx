@@ -56,9 +56,9 @@ const Skills = () => {
         <div className="relative bg-transparent text-white/60 shadow-md rounded-lg py-6 overflow-hidden">
             <div className="bg-transparent flex flex-wrap gap-3">
                 {skills.map((skill, index) => (
-                    <div key={index} className="flex flex-col items-center skill-row bg-transparent" style={{ width: 'calc(25% - 0.75rem)' }}>
+                    <div key={index} className="flex flex-col items-center skill-row " style={{ width: 'calc(25% - 0.75rem)' }}>
                         {skill.name === 'Nextjs' || skill.name === 'Threejs' ? (
-                            <img key={index} src={skill.icon} alt={skill.name} className="w-11 h-11 mb-1 transition-transform duration-300 hover:scale-125" />
+                            <img key={index} src={skill.icon} alt={skill.name} className=" bg-gray-500 rounded-full w-11 h-11 mb-1 transition-transform duration-300 hover:scale-125" />
                         ) : (
                             <img key={index} src={skill.icon} alt={skill.name} className="opacity-[0.5] w-11 h-11 mb-1 transition-transform duration-300 hover:scale-125" />
                         )}
