@@ -30,7 +30,7 @@ const FuzzyOverlay = () => {
       style={{
         backgroundImage: 'url("/assets/noise.png")',
       }}
-      className="pointer-events-none absolute -inset-[100%] opacity-[8%]"
+      className="pointer-events-none absolute -inset-[100%] opacity-[2%]"
     />
   );
 };
