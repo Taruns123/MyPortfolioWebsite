@@ -57,7 +57,7 @@ export const navLinks = [
       desc: 'An enterprise-level blockchain application powered by Hyperledger Fabric for land registrars to manage asset transactions.',
       subdesc:
         'Integrated Node.js, Express, and React.js to build the backend and frontend. Designed a modern user interface with dynamic visuals powered by Three.js for an enhanced user experience.',
-      href: 'https://github.com/your-repo-link',
+      href: 'https://github.com/Taruns123/Backend-Chainify',
       texture: '/textures/project/project1.mp4',
       logo: '/assets/project-logo1.png',
       logoStyle: {
@@ -65,6 +65,8 @@ export const navLinks = [
         border: '0.2px solid #36201D',
         boxShadow: '0px 0px 60px 0px #AA3C304D',
       },
+      images: ["/assets/project-ss/chainify-1.png","/assets/project-ss/chainify-2.png","/assets/project-ss/chainify-3.png"],
+      displayType: "laptop",
       spotlight: '/assets/spotlight1.png',
       tags: [
         {
@@ -90,12 +92,14 @@ export const navLinks = [
       ],
     },
     {
+      images: ["/assets/project-ss/bistrodex-1.png"],
       title: 'BISTRO-DEX - Restaurant Management System',
-      desc: 'A desktop application for managing restaurant billing and inventory systems.',
+      desc: 'A desktop application for managing restaurant billing and inventory.',
       subdesc:
         'Utilized Electron.js for cross-platform support and React.js for an interactive user interface. Connected the application to a MySQL database for reliable data storage and retrieval.',
-      href: 'https://github.com/your-repo-link',
+      href: 'https://github.com/Taruns123/BistroDex',
       texture: '/textures/project/project2.mp4',
+      displayType: "laptop",
       logo: '/assets/project-logo2.png',
       logoStyle: {
         backgroundColor: '#13202F',
@@ -126,8 +130,9 @@ export const navLinks = [
       desc: 'A dynamic charting library for visualizing data as bar, line, area charts, etc.',
       subdesc:
         'Created a custom solution to address the limitations of existing chart libraries, offering greater flexibility and customization. Published the library as an open-source project on GitHub.',
-      href: 'https://github.com/your-repo-link',
+      href: 'https://github.com/Taruns123/charts-react',
       texture: '/textures/project/project3.mp4',
+      displayType: "laptop",
       logo: '/assets/project-logo3.png',
       logoStyle: {
         backgroundColor: '#60f5a1',
@@ -136,6 +141,7 @@ export const navLinks = [
         border: '0.2px solid rgba(208, 213, 221, 1)',
         boxShadow: '0px 0px 60px 0px rgba(35, 131, 96, 0.3)',
       },
+      images: ["/assets/project-ss/t-charts-1.png","/assets/project-ss/t-charts-2.png"],
       spotlight: '/assets/spotlight3.png',
       tags: [
         {
@@ -146,7 +152,7 @@ export const navLinks = [
         {
           id: 2,
           name: 'TypeScript',
-          path: '/assets/skills/typescript.png',
+          path: '/assets/skills/typescript.svg',
         },
         {
           id: 3,
@@ -160,7 +166,7 @@ export const navLinks = [
       desc: 'A production-level Android app for saving notes using clean architecture principles.',
       subdesc:
         'Built a responsive user interface with Jetpack Compose and Canvas for an enhanced user experience. Integrated Dagger Hilt for dependency injection to manage dependencies efficiently.',
-      href: 'https://github.com/your-repo-link',
+      href: 'https://github.com/Taruns123/TNote',
       texture: '/textures/project/project4.mp4',
       logo: '/assets/project-logo4.png',
       logoStyle: {
@@ -168,6 +174,7 @@ export const navLinks = [
         border: '0.2px solid #0E2D58',
         boxShadow: '0px 0px 60px 0px #2F67B64D',
       },
+      images: ["/assets/project-ss/t-notes-1.png","/assets/project-ss/t-notes-2.png","/assets/project-ss/t-notes-3.png"],
       spotlight: '/assets/spotlight4.png',
       tags: [
         {
