@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import PropTypes from 'prop-types';
 import { navLinks } from '../constants';
 
 
@@ -21,6 +22,11 @@ const NavItems = ({ activeId })=>{
             </ul>
         );
     };
+    
+NavItems.propTypes = {
+    activeId: PropTypes.string.isRequired,
+};
+
 
 const Navbar = () => {
 
