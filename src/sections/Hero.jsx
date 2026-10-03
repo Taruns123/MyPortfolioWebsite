@@ -1,83 +1,51 @@
-import React, { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
-import { Environment, PerspectiveCamera } from "@react-three/drei";
-import HackerRoom from "../components/HackerRoom";
-import CanvasLoader from "../components/CanvasLoader";
-// import { Leva, useControls } from "leva";
-import { useMediaQuery } from "react-responsive";
-import { calculateSizes } from "../constants";
-import Target from "../components/Target";
-import ReactLogo from "../components/ReactLogo";
-import Rings from "../components/Rings";
-import Cube from "../components/Cube";
-import HeroCamera from "../components/HeroCamera";
-import Button from "../components/Button";
-import Robot from "../components/Robot";
-import Model from "../components/Donut";
+import { useLayoutEffect, useRef } from 'react'
+import { hero } from '../content/site.js'
+import { gsap, prefersReducedMotion } from '../lib/motion.jsx'
+import Typed from '../components/Typed.jsx'
+import { Go } from '../components/Transition.jsx'
 
-const Hero = () => {
-  //   const x = useControls("HackerRoom", {
-  //     positionX: { value: 2, min: -10, max: 10 },
-  //     positionY: { value: 2.5, min: -10, max: 10 },
-  //     positionZ: { value: 2.5, min: -10, max: 10 },
-  //     rotationX: { value: 0, min: -10, max: 10 },
-  //     rotationY: { value: 0, min: -10, max: 10 },
-  //     rotationZ: { value: 0, min: -10, max: 10 },
-  //     scale: { value: 1, min: 0.1, max: 10 },
-  //   });
+export default function Hero() {
+  const root = useRef(null)
+  const [l1, l2, accent] = hero.lines
 
-  const isSmall = useMediaQuery({ maxWidth: 440 });
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1024 });
+  useLayoutEffect(() => {
+    if (prefersReducedMotion()) return
+    const ctx = gsap.context(() => {
+      const scrib = root.current.querySelector('.scribble path')
+      const L = scrib.getTotalLength()
+      gsap.set(scrib, { strokeDasharray: L, strokeDashoffset: L })
+      gsap.timeline({ delay: 0.15 })
+        .from('.hero__line > span', { yPercent: 110, duration: 1.1, ease: 'expo.out', stagger: 0.12 })
+        .to(scrib, { strokeDashoffset: 0, duration: 0.9, ease: 'power2.inOut' }, '-=0.45')
+        .from('.hero__sub', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=1.1')
+      // The headline leans back as you scroll away from it.
+      gsap.to('.hero__title', { yPercent: -12, opacity: 0.2, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true } })
+    }, root)
+    return () => ctx.revert()
+  }, [])
 
-  const sizes = calculateSizes(isSmall, isMobile, isTablet);
   return (
-    <section className="min-h-screen flex flex-col relative" id="home">
-      <div className="w-full mx-auto flex flex-col sm:mt-36 mt-20 c-space gap-3">
-        <p className="hero_tag text-gray_gradient">
-          Building Products and Brands
-        </p>
-      </div>
-      <div className="w-full h-full absolute inset-0 ">
-        {/* <Leva /> */}
-        <Canvas className="w-full h-full pl-100 opacity-85">
-          <Suspense fallback={<CanvasLoader />} />
-          <PerspectiveCamera makeDefault position={[0, 0, 20]} />
-          <HeroCamera isMobile={isMobile}>
-            {/* <HackerRoom
-              scale={sizes.deskScale}
-              position={sizes.deskPosition}
-              rotation={[0, -Math.PI, 0]}
-            /> */}
-            <Model />
-            {/* <Robot
-              scale={sizes.deskScale * 30}
-              position={sizes.deskPosition}
-              rotation={[0, -0.7, 0]}
-            /> */}
-          </HeroCamera>
-          {/* <group> */}
-          {/* <Target position={sizes.targetPosition} />
-            <ReactLogo position={sizes.reactLogoPosition} />
-            <Cube position={sizes.cubePosition} />
-            <Rings position={sizes.ringPosition} /> */}
-          {/* </group> */}
-          <Environment preset="city" />
-          <ambientLight intensity={1} />
-          <directionalLight position={[10, 10, 10]} />
-        </Canvas>
-      </div>
-      <div className="absolute bottom-7 left-0 right-0 w-full z-10 c-space">
-        {/* <a href="#about" className="w-fit">
-          <Button
-            name="Let's work together"
-            isBeam
-            containerClass="sm:w-fit w-full sm:min-w-[96px]"
-          />
-        </a> */}
+    <section className="hero" ref={root}>
+      <span className="mono hero__cue">{hero.cue}</span>
+      <h1 className="hero__title" aria-label={hero.lines.join(' ')}>
+        <span className="hero__line"><span>{l1}</span></span>
+        <span className="hero__line">
+          <span>{l2} <em>{accent}
+            <svg className="scribble" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M4 26 C 70 8, 140 34, 210 18 S 330 10, 396 22" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+            </svg>
+          </em></span>
+        </span>
+      </h1>
+      <div className="hero__sub">
+        <p className="hero__lede">{hero.sub}</p>
+        <div className="hero__term mono">
+          {hero.terminal.map((t, i) => (
+            <div key={t}><Typed text={t} prompt=">" onMount delay={900 + i * 900} speed={22} caret={i === hero.terminal.length - 1} /></div>
+          ))}
+        </div>
+        <Go to="/#contact" className="hero__cta">{hero.cta} →</Go>
       </div>
     </section>
-  );
-};
-
-export default Hero;
+  )
+}
