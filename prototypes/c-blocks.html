@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype C · Blocks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{ --cobalt:#1f3dff; --pink:#ff6aa8; --acid:#e6ff3d; --ink:#0b0b0b; --white:#fbfaf6; }
+*{box-sizing:border-box;margin:0}
+html{background:var(--white)}
+body{background:var(--white);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;overflow-x:hidden}
+.serif{font-family:"Instrument Serif",Georgia,serif;font-style:italic;font-weight:400}
+
+nav{position:fixed;top:12px;left:12px;right:12px;z-index:10;display:flex;justify-content:space-between;align-items:center;mix-blend-mode:difference;color:#fff;font-weight:600;font-size:15px}
+nav a{color:#fff}
+
+.hero{min-height:100svh;display:grid;grid-template-columns:1.25fr 1fr;align-items:center;padding:90px 16px 24px;gap:16px;position:relative}
+.hero h1{font-weight:800;font-variation-settings:"wdth" 88,"opsz" 96;font-size:clamp(60px,11vw,190px);line-height:.9;letter-spacing:-.025em}
+.roll{display:block;height:1.02em;overflow:hidden;position:relative}
+.roll-track{display:flex;flex-direction:column}
+.roll-track span{height:1.02em;display:block;white-space:nowrap}
+.roll-track span:nth-child(4n+1){color:var(--cobalt)}
+.roll-track span:nth-child(4n+2){color:var(--pink)}
+.roll-track span:nth-child(4n+3){color:#8aa300}
+.roll-track span:nth-child(4n+4){color:var(--ink)}
+.hero .lede{font-size:clamp(17px,1.5vw,21px);line-height:1.4;max-width:36ch;margin-top:28px}
+.hero .lede .serif{font-size:1.25em}
+.stack{position:relative;aspect-ratio:1;width:100%;max-width:560px;justify-self:center}
+.stack canvas,.stack svg{position:absolute;inset:0;width:100%;height:100%}
+.hint{position:absolute;bottom:20px;left:16px;font-size:13px;opacity:.6}
+
+/* block grid */
+.grid{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(46vh,auto);border-top:3px solid var(--ink)}
+.cell{position:relative;border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);padding:20px 16px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;outline:none}
+.cell:nth-child(2n){border-right:0}
+.cell:focus-visible{box-shadow:inset 0 0 0 4px var(--ink)}
+.c1{background:var(--cobalt);color:var(--white)} .c2{background:var(--pink)} .c3{background:var(--acid)} .c4{background:var(--ink);color:var(--white)}
+.cell h2{font-weight:800;font-variation-settings:"wdth" 88;font-size:clamp(40px,5.4vw,92px);line-height:.9;letter-spacing:-.03em}
+.cell .top{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
+.cell .reel{position:absolute;right:16px;bottom:16px;width:min(46%,340px);aspect-ratio:4/3;border:3px solid currentColor;background:rgba(255,255,255,.08);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.cell:hover .reel{transform:rotate(-3deg) scale(1.04)}
+.cell .more{display:none;max-width:44ch;font-size:18px;line-height:1.45;margin-top:18px}
+.cell .more .serif{font-size:1.2em}
+.cell .more a{color:inherit;font-weight:700}
+.grid.open .cell:not(.active){display:none}
+.grid.open .cell.active{grid-column:1/-1;min-height:92vh;border-right:0}
+.grid.open .cell.active .more{display:block}
+.grid.open .cell.active .reel{width:min(58%,640px)}
+.close{display:none;position:absolute;top:18px;right:16px;font:700 14px "Bricolage Grotesque";background:transparent;color:inherit;border:2px solid currentColor;padding:6px 12px;cursor:pointer;z-index:2}
+.grid.open .cell.active .close{display:block}
+
+/* tiny looping reels (pure SVG/CSS so they cost nothing) */
+.reel svg{width:100%;height:100%;display:block}
+@keyframes grow{0%,10%{transform:scaleY(.15)}45%,100%{transform:scaleY(1)}}
+@keyframes slideIn{0%,15%{transform:translateX(-110%)}40%,100%{transform:translateX(0)}}
+@keyframes type{0%,10%{width:0}60%,100%{width:100%}}
+@keyframes rowflash{0%,60%{fill:transparent}70%{fill:currentColor;opacity:.25}100%{fill:transparent}}
+.bar{transform-origin:bottom;transform-box:fill-box;animation:grow 3.2s ease-out infinite}
+.card{animation:slideIn 3.2s cubic-bezier(.2,.8,.2,1) infinite}
+.line{animation:type 3.2s steps(24) infinite}
+.flash{animation:rowflash 3.2s infinite}
+
+footer{padding:40px 16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:clamp(28px,4vw,56px);font-weight:800;font-variation-settings:"wdth" 88;letter-spacing:-.02em}
+footer a{color:var(--ink)}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;padding-top:76px}
+  .stack{max-width:340px;order:-1}
+  .grid{grid-template-columns:1fr}.cell{border-right:0;min-height:56vh}
+  .cell .reel{position:relative;right:auto;bottom:auto;width:100%;margin-top:16px}
+  .grid.open .cell.active .reel{width:100%}
+  .hint{display:none}
+}
+@media (prefers-reduced-motion: reduce){ .bar,.card,.line,.flash{animation:none} }
+</style>
+</head>
+<body>
+<nav><span>Tarun Shetty</span><a href="#work">work</a></nav>
+
+<section class="hero">
+  <div>
+    <h1>Tarun<br>builds
+      <span class="roll" aria-live="off"><span class="roll-track" id="roll"><span>SaaS.</span><span>stores.</span><span>AI bits.</span><span>tools.</span><span>SaaS.</span></span></span>
+    </h1>
+    <p class="lede">A full-stack developer in Mumbai, working <span class="serif">your</span> afternoon. Four kinds of products, each built properly, each yours at the end.</p>
+  </div>
+  <div class="stack" id="stack" aria-hidden="true">
+    <!-- fallback until/unless WebGL loads -->
+    <svg viewBox="0 0 400 400" id="stackFallback">
+      <g transform="translate(200 90)">
+        <polygon points="0,0 120,60 0,120 -120,60" fill="#1f3dff"/><polygon points="-120,60 0,120 0,160 -120,100" fill="#1a33d6"/><polygon points="120,60 0,120 0,160 120,100" fill="#152aaf"/>
+        <g transform="translate(0 60)"><polygon points="0,40 120,100 0,160 -120,100" fill="#ff6aa8"/><polygon points="-120,100 0,160 0,200 -120,140" fill="#e05a93"/><polygon points="120,100 0,160 0,200 120,140" fill="#c44c7f"/></g>
+      </g>
+    </svg>
+  </div>
+  <span class="hint">move your mouse · scroll to take it apart</span>
+</section>
+
+<section class="grid" id="work">
+  <article class="cell c1" tabindex="0" data-i="0">
+    <button class="close" aria-label="Close">close ✕</button>
+    <div class="top"><span>01</span><span>4–6 weeks</span></div>
+    <div><h2>SaaS<br>products</h2>
+      <div class="more">Sign-up, Stripe billing, and the <span class="serif">one</span> workflow your first customers pay for. Next.js, Node, Postgres. You own the repo from day one.<br><br>Proof: <a href="https://github.com/Taruns123/Backend-Chainify">Chainify ↗</a>, an asset registry on Hyperledger Fabric.</div></div>
+    <div class="reel"><svg viewBox="0 0 160 120"><rect x="8" y="8" width="144" height="16" fill="currentColor" opacity=".3"/><g fill="currentColor"><rect class="bar" x="18" y="50" width="16" height="60"/><rect class="bar" x="44" y="70" width="16" height="40" style="animation-delay:.15s"/><rect class="bar" x="70" y="40" width="16" height="70" style="animation-delay:.3s"/><rect class="bar" x="96" y="60" width="16" height="50" style="animation-delay:.45s"/><rect class="bar" x="122" y="32" width="16" height="78" style="animation-delay:.6s"/></g></svg></div>
+  </article>
+  <article class="cell c2" tabindex="0" data-i="1">
+    <button class="close" aria-label="Close">close ✕</button>
+    <div class="top"><span>02</span><span>2–4 weeks</span></div>
+    <div><h2>Shopify<br>stores</h2>
+      <div class="more">Stores that load in under two seconds on a phone. Theme work, speed fixes, migrations, with <span class="serif">before/after</span> numbers on every change.<br><br>Proof: speed case study (in progress).</div></div>
+    <div class="reel"><svg viewBox="0 0 160 120"><g class="card"><rect x="10" y="14" width="40" height="52" fill="currentColor" opacity=".85"/><rect x="10" y="72" width="40" height="8" fill="currentColor" opacity=".5"/></g><g class="card" style="animation-delay:.2s"><rect x="60" y="14" width="40" height="52" fill="currentColor" opacity=".85"/><rect x="60" y="72" width="30" height="8" fill="currentColor" opacity=".5"/></g><g class="card" style="animation-delay:.4s"><rect x="110" y="14" width="40" height="52" fill="currentColor" opacity=".85"/><rect x="110" y="72" width="36" height="8" fill="currentColor" opacity=".5"/></g><rect x="10" y="94" width="140" height="16" fill="none" stroke="currentColor" stroke-width="2"/><text x="16" y="106" font-size="9" font-family="sans-serif" fill="currentColor">PageSpeed 38 → 91</text></svg></div>
+  </article>
+  <article class="cell c3" tabindex="0" data-i="2">
+    <button class="close" aria-label="Close">close ✕</button>
+    <div class="top"><span>03</span><span>2–3 weeks</span></div>
+    <div><h2>AI<br>features</h2>
+      <div class="more">An assistant or automation inside the product you already have, grounded in <span class="serif">your</span> data, with cost caps and evals so it doesn't make things up.<br><br>Proof: demo coming.</div></div>
+    <div class="reel"><svg viewBox="0 0 160 120"><rect x="60" y="12" width="90" height="20" rx="2" fill="currentColor" opacity=".25"/><svg x="10" y="44" width="120" height="16" overflow="hidden"><rect class="line" x="0" y="0" width="120" height="16" fill="currentColor" opacity=".8" style="transform-origin:left"/></svg><svg x="10" y="66" width="100" height="16" overflow="hidden"><rect class="line" x="0" y="0" width="100" height="16" fill="currentColor" opacity=".6" style="animation-delay:.4s"/></svg><rect x="10" y="94" width="140" height="14" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+  </article>
+  <article class="cell c4" tabindex="0" data-i="3">
+    <button class="close" aria-label="Close">close ✕</button>
+    <div class="top"><span>04</span><span>3–5 weeks</span></div>
+    <div><h2>Internal<br>tools</h2>
+      <div class="more">The spreadsheet your team lives in, rebuilt as an app with roles, an audit log and exports. <span class="serif">Boring</span> on purpose, so it doesn't break.<br><br>Proof: <a href="https://github.com/Taruns123/BistroDex">BistroDex ↗</a>, billing and inventory.</div></div>
+    <div class="reel"><svg viewBox="0 0 160 120" style="color:#e6ff3d"><g stroke="currentColor" stroke-width="1.5"><line x1="8" y1="26" x2="152" y2="26"/><line x1="8" y1="50" x2="152" y2="50"/><line x1="8" y1="74" x2="152" y2="74"/><line x1="8" y1="98" x2="152" y2="98"/></g><rect class="flash" x="8" y="51" width="144" height="22"/><rect class="flash" x="8" y="75" width="144" height="22" style="animation-delay:.8s"/><g fill="currentColor"><rect x="12" y="10" width="40" height="8"/><rect x="12" y="34" width="60" height="8" opacity=".6"/><rect x="12" y="58" width="50" height="8" opacity=".6"/><rect x="12" y="82" width="70" height="8" opacity=".6"/><rect x="120" y="34" width="28" height="8"/><rect x="120" y="58" width="28" height="8"/><rect x="120" y="82" width="28" height="8"/></g></svg></div>
+  </article>
+</section>
+
+<footer><span>Got a <span class="serif">thing</span> to build?</span><a href="mailto:hello@tarunshetty.dev">hello@tarunshetty.dev ↗</a></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Flip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script>
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+gsap.registerPlugin(ScrollTrigger, Flip);
+
+/* rolling word */
+if (!reduce){
+  const roll = document.getElementById("roll"); let n = 0;
+  setInterval(() => {
+    n++;
+    gsap.to(roll, {yPercent: -n * 20, duration: .7, ease: "expo.inOut", onComplete: () => {
+      if (n === 4){ n = 0; gsap.set(roll, {yPercent: 0}); }
+    }});
+  }, 1900);
+  const lenis = new Lenis(); lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0);
+  gsap.from(".hero h1, .hero .lede", {y: 40, opacity: 0, duration: 1, ease: "expo.out", stagger: .12});
+  gsap.from(".cell", {y: 80, opacity: 0, duration: .9, ease: "expo.out", stagger: .08, scrollTrigger: {trigger: ".grid", start: "top 80%"}});
+}
+
+/* block grid: one click grows a block to full width (Flip keeps it continuous) */
+const grid = document.getElementById("work");
+function toggle(cell){
+  const state = Flip.getState(".cell, .reel");
+  const opening = !grid.classList.contains("open");
+  grid.classList.toggle("open", opening);
+  document.querySelectorAll(".cell").forEach(c => c.classList.toggle("active", opening && c === cell));
+  if (!reduce) Flip.from(state, {duration: .7, ease: "expo.inOut", absolute: true, nested: true,
+    onEnter: els => gsap.fromTo(els, {opacity: 0}, {opacity: 1, duration: .4}),
+    onLeave: els => gsap.to(els, {opacity: 0, duration: .25})});
+  (opening ? cell : grid).scrollIntoView({block: "start"});
+}
+document.querySelectorAll(".cell").forEach(c => {
+  c.addEventListener("click", e => { if (e.target.closest("a")) return; if (!grid.classList.contains("open") || e.target.closest(".close")) toggle(c); });
+  c.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(c); } if (e.key === "Escape" && grid.classList.contains("open")) toggle(c); });
+});
+
+/* tiny 3D: four blocks (the four build types), loaded after first paint */
+async function init3D(){
+  if (reduce) return;
+  const T = await import("https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js");
+  const host = document.getElementById("stack");
+  const renderer = new T.WebGLRenderer({antialias: true, alpha: true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  const size = () => { const r = host.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); };
+  host.appendChild(renderer.domElement); size(); addEventListener("resize", size);
+  document.getElementById("stackFallback").remove();
+
+  const scene = new T.Scene();
+  const cam = new T.PerspectiveCamera(32, 1, .1, 100); cam.position.set(7, 6, 9); cam.lookAt(0, 0, 0);
+  scene.add(new T.HemisphereLight(0xffffff, 0x444466, 2.2));
+  const sun = new T.DirectionalLight(0xffffff, 2.4); sun.position.set(4, 8, 5); scene.add(sun);
+
+  const colors = [0x1f3dff, 0xff6aa8, 0xe6ff3d, 0x0b0b0b];
+  const group = new T.Group(); scene.add(group);
+  const blocks = colors.map((c, i) => {
+    const m = new T.Mesh(new T.BoxGeometry(3, .8, 3), new T.MeshStandardMaterial({color: c, roughness: .55}));
+    const edges = new T.LineSegments(new T.EdgesGeometry(m.geometry), new T.LineBasicMaterial({color: 0x0b0b0b}));
+    m.add(edges); m.position.y = 1.35 - i * .9; group.add(m); return m;
+  });
+
+  // scroll explodes the stack, pointer tilts it
+  const explode = {v: 0};
+  gsap.to(explode, {v: 1, ease: "none", scrollTrigger: {trigger: ".hero", start: "top top", end: "bottom top", scrub: .6}});
+  let tx = 0, ty = 0;
+  addEventListener("pointermove", e => { tx = (e.clientX / innerWidth - .5) * .8; ty = (e.clientY / innerHeight - .5) * .5; });
+
+  let visible = true;
+  new IntersectionObserver(([e]) => visible = e.isIntersecting).observe(host);
+  const clock = new T.Clock();
+  (function loop(){
+    requestAnimationFrame(loop);
+    if (!visible) return;
+    const t = clock.getElapsedTime();
+    group.rotation.y += ((tx + t * .15) - group.rotation.y) * .05;
+    group.rotation.x += (ty - group.rotation.x) * .05;
+    blocks.forEach((b, i) => {
+      const k = i - 1.5;
+      b.position.y = 1.35 - i * .9 + Math.sin(t * 1.4 + i) * .04 + -k * explode.v * 1.4;
+      b.position.x = k * explode.v * .9;
+      b.rotation.y = k * explode.v * .5;
+    });
+    renderer.render(scene, cam);
+  })();
+}
+(window.requestIdleCallback || setTimeout)(() => init3D().catch(() => {}), 300);
+</script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype B · Command</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{ --red:#ff4a1c; --ink:#0e0e0e; --cream:#fff3e3; --lime:#d7ff3a; }
+*{box-sizing:border-box;margin:0}
+html{background:var(--red)}
+body{background:var(--red);color:var(--ink);font-family:"JetBrains Mono",ui-monospace,monospace;overflow-x:hidden}
+.big{font-family:Anton,Impact,sans-serif;text-transform:uppercase;letter-spacing:-.01em;line-height:.86}
+
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;font-size:13px;font-weight:600}
+header a{color:var(--ink)}
+
+.hero{min-height:calc(100svh - 48px);display:flex;flex-direction:column;padding:0 16px 16px}
+.hero h1{font-size:clamp(50px,15vw,270px);line-height:.95;margin-top:2vh}
+.hero h1 .w{display:inline-block;will-change:transform}
+.term{margin-top:auto;background:var(--ink);color:var(--cream);border:3px solid var(--ink);box-shadow:10px 10px 0 var(--cream)}
+.term-bar{display:flex;gap:8px;align-items:center;padding:8px 12px;border-bottom:2px solid #333;font-size:12px;color:#9a9a9a}
+.term-bar i{width:11px;height:11px;border-radius:50%;background:#444;display:inline-block}
+.term-body{padding:16px;font-size:clamp(15px,1.6vw,22px);display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.prompt{color:var(--lime);font-weight:800}
+.typed{min-width:2ch}
+.caret{display:inline-block;width:.6em;height:1.1em;background:var(--lime);vertical-align:-.15em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.chips{display:flex;gap:10px;flex-wrap:wrap;width:100%;margin-top:6px}
+.chip{font:800 clamp(14px,1.3vw,18px) "JetBrains Mono",monospace;padding:10px 14px;border:2px solid var(--cream);background:transparent;color:var(--cream);cursor:pointer;transition:transform .15s,background .15s,color .15s}
+.chip:hover{transform:translate(-3px,-3px);box-shadow:3px 3px 0 var(--lime)}
+.chip[aria-pressed="true"]{background:var(--lime);color:var(--ink);border-color:var(--lime)}
+.chip:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+
+/* world */
+.world{border-top:3px solid var(--ink);background:var(--cream);min-height:100vh;display:grid;grid-template-columns:1fr 1.6fr}
+.world aside{padding:28px 16px;border-right:3px solid var(--ink);display:flex;flex-direction:column;gap:18px}
+.world aside .big{font-size:clamp(48px,6vw,104px)}
+.world aside p{font-size:15px;line-height:1.6;max-width:40ch}
+.world aside .meta{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px;border-top:2px solid var(--ink);padding-top:14px}
+.world aside .meta b{font-weight:800}
+.stagebox{position:relative;padding:28px;display:grid;place-items:center;overflow:hidden}
+.mini{width:100%;max-width:760px;aspect-ratio:16/11;background:#fff;border:3px solid var(--ink);box-shadow:12px 12px 0 var(--ink);position:relative;display:grid;gap:10px;padding:14px}
+.blk{border:2px solid var(--ink);background:var(--cream);padding:10px;font-size:12px;font-weight:600;overflow:hidden;position:relative}
+.blk.dark{background:var(--ink);color:var(--cream)}
+.blk.red{background:var(--red)}
+.blk.lime{background:var(--lime)}
+.blk .k{font-family:Anton,sans-serif;font-size:clamp(20px,2.6vw,38px);line-height:1;display:block;margin-top:6px}
+.bubble{border:2px solid var(--ink);padding:8px 10px;max-width:80%;font-size:12.5px;line-height:1.45;background:#fff}
+.bubble.me{margin-left:auto;background:var(--lime)}
+.row{display:grid;grid-template-columns:1.2fr 1fr .8fr .6fr;gap:8px;padding:7px 4px;border-bottom:1px dashed #999;font-size:12px}
+.row.h{font-weight:800;border-bottom:2px solid var(--ink)}
+.tag{display:inline-block;padding:1px 6px;border:1.5px solid var(--ink);font-size:10.5px;font-weight:800}
+.tag.ok{background:var(--lime)} .tag.wait{background:var(--red);color:#fff}
+
+/* proof strip */
+.proof{background:var(--ink);color:var(--cream);overflow:hidden;border-top:3px solid var(--ink)}
+.proof .track{display:flex;gap:16px;padding:22px 16px;width:max-content;animation:slide 30s linear infinite}
+.proof:hover .track{animation-play-state:paused}
+@keyframes slide{to{transform:translateX(-50%)}}
+.pcard{width:300px;border:2px solid var(--cream);padding:14px;display:flex;flex-direction:column;gap:8px}
+.pcard .big{font-size:34px}
+.pcard a{color:var(--lime);font-size:12px}
+
+@media (max-width:820px){
+  .world{grid-template-columns:1fr}.world aside{border-right:0;border-bottom:3px solid var(--ink)}
+  .stagebox{padding:16px}
+  .mini{aspect-ratio:auto;min-height:420px;box-shadow:6px 6px 0 var(--ink)}
+  .term{box-shadow:6px 6px 0 var(--cream);margin-right:6px}
+}
+@media (prefers-reduced-motion: reduce){ .proof .track,.caret{animation:none} }
+</style>
+</head>
+<body>
+<header><span>tarun shetty / full-stack dev / mumbai</span><a href="#contact">hire ↗</a></header>
+
+<section class="hero">
+  <h1 class="big" id="headline" aria-label="What are we building?"><span class="w">What</span> <span class="w">are</span> <span class="w">we</span><br><span class="w">building?</span></h1>
+  <div class="term" role="group" aria-label="Pick a build type">
+    <div class="term-bar"><i></i><i></i><i></i><span style="margin-left:8px">~/tarun — build</span></div>
+    <div class="term-body">
+      <span class="prompt">$</span><span>build</span><span class="typed" id="typed"></span><span class="caret" aria-hidden="true"></span>
+      <div class="chips">
+        <button class="chip" data-k="saas" aria-pressed="false">saas-mvp</button>
+        <button class="chip" data-k="store" aria-pressed="false">storefront</button>
+        <button class="chip" data-k="ai" aria-pressed="false">ai-feature</button>
+        <button class="chip" data-k="tool" aria-pressed="false">internal-tool</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="world" id="world" aria-live="polite">
+  <aside>
+    <span style="font-size:12px;font-weight:800" id="w-idx">01 / 04</span>
+    <h2 class="big" id="w-title">SaaS MVP</h2>
+    <p id="w-desc"></p>
+    <div class="meta">
+      <span>stack</span><b id="w-stack"></b>
+      <span>time</span><b id="w-time"></b>
+      <span>proof</span><b id="w-proof"></b>
+    </div>
+  </aside>
+  <div class="stagebox"><div class="mini" id="mini"></div></div>
+</section>
+
+<section class="proof" id="contact" aria-label="Real work">
+  <div class="track" id="track"></div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script>
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const BUILDS = {
+  saas:{idx:"01", title:"SaaS MVP", cmd:" --saas-mvp",
+    desc:"Sign-up, Stripe billing and the one workflow your first ten customers pay for, live on a URL you can demo in week one.",
+    stack:"Next.js · Node · Postgres · Stripe", time:"4–6 weeks", proof:"Chainify (Hyperledger asset registry)",
+    grid:"grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto 1fr",
+    blocks:[
+      ['dark','<span>ledgerly</span><span class="k">Overview</span>','grid-column:1/-1'],
+      ['lime','MRR<span class="k">$12,480</span>'],['','Users<span class="k">342</span>'],['red','Churn<span class="k">4.1%</span>'],
+      ['','Revenue · 8 wks<svg viewBox="0 0 300 90" style="width:100%;height:calc(100% - 18px);margin-top:6px" preserveAspectRatio="none"><polyline points="0,80 40,70 80,74 120,50 160,56 200,30 240,36 300,8" fill="none" stroke="#0e0e0e" stroke-width="4"/></svg>','grid-column:1/-1']
+    ]},
+  store:{idx:"02", title:"Storefront", cmd:" --storefront",
+    desc:"A Shopify store that loads in under two seconds on a phone, with a checkout that doesn't leak buyers. Every speed change comes with before/after numbers.",
+    stack:"Shopify · Liquid · Hydrogen · Klaviyo", time:"2–4 weeks", proof:"Speed case study (in progress)",
+    grid:"grid-template-columns:repeat(3,1fr);grid-template-rows:auto 1fr 1fr auto",
+    blocks:[
+      ['dark','<span>OATMEAL & CO.</span><span style="float:right">cart (2)</span>','grid-column:1/-1'],
+      ['red','<span class="k">Oat cup</span>$18'],['lime','<span class="k">Mill set</span>$64'],['','<span class="k">Tin</span>$12'],
+      ['','<span class="k">Linen</span>$22'],['','<span class="k">Spoon</span>$9'],['red','<span class="k">Gift</span>$40'],
+      ['lime','PageSpeed mobile <b>38 → 91</b> · LCP <b>4.8s → 1.6s</b>','grid-column:1/-1']
+    ]},
+  ai:{idx:"03", title:"AI feature", cmd:" --ai-feature",
+    desc:"An LLM feature inside the product you already have: grounded in your own data, with cost caps and checks that catch bad answers before users do.",
+    stack:"OpenAI / Claude APIs · pgvector · Python", time:"2–3 weeks", proof:"Demo coming",
+    grid:"grid-template-columns:1fr;grid-template-rows:auto 1fr auto",
+    blocks:[
+      ['dark','support-copilot · answers from your help docs'],
+      ['','<div class="bubble me">Can I change plans mid-cycle?</div><div class="bubble" style="margin-top:8px">Yes. Upgrades apply now and are pro-rated; downgrades start next cycle. <span class="tag ok">source: billing.md §3</span></div><div class="bubble me" style="margin-top:8px">and refunds?</div><div class="bubble" style="margin-top:8px" id="stream"></div>'],
+      ['lime','cost cap $40/mo · eval pass rate 96% · p95 1.4s']
+    ]},
+  tool:{idx:"04", title:"Internal tool", cmd:" --internal-tool",
+    desc:"The spreadsheet your ops team lives in, turned into an app with roles, an audit log and one-click exports. Boring on purpose, so it doesn't break.",
+    stack:"React · Node · Postgres", time:"3–5 weeks", proof:"BistroDex (billing + inventory)",
+    grid:"grid-template-columns:1fr 2fr;grid-template-rows:auto 1fr",
+    blocks:[
+      ['dark','orders · ops','grid-column:1/-1'],
+      ['red','Filters<span class="k">12</span>pending'],
+      ['','<div class="row h"><span>Order</span><span>Client</span><span>Amount</span><span>State</span></div><div class="row"><span>#2041</span><span>Kaveri</span><span>$1,240</span><span class="tag ok">paid</span></div><div class="row"><span>#2042</span><span>Northwind</span><span>$380</span><span class="tag wait">hold</span></div><div class="row"><span>#2043</span><span>Ostia</span><span>$2,100</span><span class="tag ok">paid</span></div><div class="row"><span>#2044</span><span>Bramble</span><span>$96</span><span class="tag ok">paid</span></div>']
+    ]}
+};
+const ORDER = ["saas","store","ai","tool"];
+
+const mini = document.getElementById("mini"), typed = document.getElementById("typed");
+const chips = [...document.querySelectorAll(".chip")];
+let current = null, typing = null, pinST = null, lenis = null;
+
+function typeCmd(text){
+  clearInterval(typing); typed.textContent = "";
+  if (reduce){ typed.textContent = text; return; }
+  let i = 0; typing = setInterval(()=>{ typed.textContent = text.slice(0, ++i); if (i >= text.length) clearInterval(typing); }, 38);
+}
+
+function build(k, fromUser){
+  if (k === current) return; current = k;
+  const b = BUILDS[k];
+  chips.forEach(c => c.setAttribute("aria-pressed", c.dataset.k === k));
+  typeCmd(b.cmd);
+  document.getElementById("w-idx").textContent = b.idx + " / 04";
+  document.getElementById("w-title").textContent = b.title;
+  document.getElementById("w-desc").textContent = b.desc;
+  document.getElementById("w-stack").textContent = b.stack;
+  document.getElementById("w-time").textContent = b.time;
+  document.getElementById("w-proof").textContent = b.proof;
+  mini.style.cssText = b.grid;
+  mini.innerHTML = b.blocks.map(([cls, html, style=""]) => `<div class="blk ${cls}" style="${style}">${html}</div>`).join("");
+  const blks = mini.querySelectorAll(".blk");
+  if (!reduce){
+    // blocks fly in from scattered positions and snap into the grid
+    gsap.fromTo(blks,
+      {x:()=>gsap.utils.random(-260,260), y:()=>gsap.utils.random(-200,200), rotation:()=>gsap.utils.random(-25,25), opacity:0},
+      {x:0, y:0, rotation:0, opacity:1, duration:.75, ease:"back.out(1.6)", stagger:.06});
+  }
+  const s = document.getElementById("stream");
+  if (s){ const msg = "Refunds within 14 days, minus usage. After that, credit only."; s.textContent = "";
+    if (reduce) s.textContent = msg;
+    else { let i=0; const t=setInterval(()=>{ s.textContent = msg.slice(0, i+=2); if(i>=msg.length) clearInterval(t); }, 45); } }
+  if (fromUser && !reduce && pinST) {
+    // jump to the slice of the pinned section that shows this build
+    const i = ORDER.indexOf(k);
+    lenis.scrollTo(pinST.start + (i + .5) / 4 * (pinST.end - pinST.start), {duration:1.2});
+  } else if (fromUser) document.getElementById("world").scrollIntoView();
+}
+chips.forEach(c => c.addEventListener("click", () => build(c.dataset.k, true)));
+
+/* proof strip (real projects) */
+const proofs = [
+  ["Chainify","Land-registry asset management on Hyperledger Fabric","https://github.com/Taruns123/Backend-Chainify"],
+  ["T-Charts","React charting library: bar, line, area","https://github.com/Taruns123/charts-react"],
+  ["BistroDex","Electron app for restaurant billing + inventory","https://github.com/Taruns123/BistroDex"],
+  ["T-Note","Android notes app, clean architecture","https://github.com/Taruns123/TNote"],
+  ["Your build","Tell me what you're building →","mailto:hello@tarunshetty.dev"]
+];
+const card = ([t,d,h]) => `<div class="pcard"><span class="big">${t}</span><span style="font-size:13px;line-height:1.5">${d}</span><a href="${h}">${h.startsWith("mailto")?"hello@tarunshetty.dev":"view repo ↗"}</a></div>`;
+document.getElementById("track").innerHTML = proofs.map(card).join("") + proofs.map(card).join("");
+
+build("saas");
+
+if (!reduce){
+  gsap.registerPlugin(ScrollTrigger);
+  lenis = new Lenis(); lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
+
+  // headline words drop in like heavy type
+  gsap.from(".w",{yPercent:-120, rotation:()=>gsap.utils.random(-8,8), duration:.9, ease:"bounce.out", stagger:.09});
+  gsap.from(".term",{y:60, opacity:0, duration:.7, delay:.6, ease:"power3.out"});
+  // headline slides apart as you scroll into the world
+  gsap.to(".w:nth-child(odd)",{xPercent:-30, scrollTrigger:{trigger:".hero", start:"top top", end:"bottom top", scrub:true}});
+  gsap.to(".w:nth-child(even)",{xPercent:30, scrollTrigger:{trigger:".hero", start:"top top", end:"bottom top", scrub:true}});
+  // auto-cycle builds while the world section is pinned
+  pinST = ScrollTrigger.create({trigger:"#world", start:"top top", end:"+=1800", pin:true,
+    onUpdate:s => build(ORDER[Math.min(3, Math.floor(s.progress * 4))])});
+}
+</script>
+</body>
+</html>

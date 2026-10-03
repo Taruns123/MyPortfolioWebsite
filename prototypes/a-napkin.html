@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype A · Napkin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f1ede2; --ink:#121212; --blue:#2c3bff; --marker:#ffe14d; --grey:#cfc9ba;
+}
+*{box-sizing:border-box;margin:0}
+html{background:var(--paper)}
+body{background:var(--paper);color:var(--ink);font-family:Archivo,system-ui,sans-serif;overflow-x:hidden}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.02em;text-transform:uppercase}
+
+/* top rail */
+.rail{position:fixed;inset:0 0 auto 0;z-index:20;display:grid;grid-template-columns:auto 1fr auto;border-bottom:2px solid var(--ink);background:var(--paper)}
+.rail > *{padding:10px 16px;border-right:2px solid var(--ink)}
+.rail > *:last-child{border-right:0}
+.rail .tick{overflow:hidden;white-space:nowrap}
+.rail .tick span{display:inline-block;animation:tick 28s linear infinite}
+@keyframes tick{to{transform:translateX(-50%)}}
+.rail a{color:var(--ink);text-decoration:none;background:var(--marker)}
+
+/* hero */
+.hero{min-height:100svh;padding:110px 16px 40px;display:grid;grid-template-rows:1fr auto;position:relative}
+.hero h1{font-weight:900;font-variation-settings:"wdth" 125;font-size:clamp(46px,10.4vw,190px);line-height:.86;letter-spacing:-.035em;text-transform:uppercase;align-self:center}
+.hero h1 .line{display:block;overflow:hidden;padding-bottom:.04em}
+.hero h1 .line > span{display:inline-block}
+.hero h1 em{font-style:normal;white-space:nowrap;color:var(--blue);position:relative;display:inline-block}
+.hero h1 svg.scribble{position:absolute;left:-2%;bottom:-.06em;width:104%;height:.32em;overflow:visible}
+.hero .sub{display:grid;grid-template-columns:1.2fr 1fr auto;gap:0;border:2px solid var(--ink)}
+.hero .sub > *{padding:16px;border-right:2px solid var(--ink)}
+.hero .sub > *:last-child{border-right:0}
+.hero .sub p{font-size:clamp(17px,1.5vw,22px);line-height:1.3;font-variation-settings:"wdth" 90}
+.hero .sub .cta{display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--paper);text-decoration:none;font-weight:800;font-variation-settings:"wdth" 110;font-size:18px;min-width:180px;transition:background .2s}
+.hero .sub .cta:hover{background:var(--blue)}
+.scroll-cue{position:absolute;right:16px;top:96px}
+
+/* sketch -> ship section */
+.build{min-height:100vh;border-top:2px solid var(--ink);display:grid;grid-template-columns:minmax(260px,1fr) 2fr}
+.build aside{border-right:2px solid var(--ink);padding:28px 16px;display:flex;flex-direction:column;gap:22px}
+.build .num{font-weight:900;font-variation-settings:"wdth" 125;font-size:clamp(64px,8vw,130px);line-height:.8}
+.build h2{font-weight:850;font-variation-settings:"wdth" 100;font-size:clamp(26px,2.6vw,40px);line-height:1;text-transform:uppercase}
+.stages{display:flex;flex-direction:column;border:2px solid var(--ink)}
+.stage{display:flex;justify-content:space-between;padding:12px 14px;border-bottom:2px solid var(--ink);transition:background .25s,color .25s}
+.stage:last-child{border-bottom:0}
+.stage.on{background:var(--ink);color:var(--paper)}
+.stage.on.ship{background:var(--blue)}
+.build aside p{font-size:17px;line-height:1.4;font-variation-settings:"wdth" 92;max-width:34ch}
+.proof{margin-top:auto;border:2px solid var(--ink);padding:14px;background:var(--marker)}
+.proof a{color:var(--ink);font-weight:800}
+.canvas{position:relative;display:grid;place-items:center;padding:24px;background:
+  repeating-linear-gradient(0deg,transparent 0 31px,rgba(18,18,18,.07) 31px 32px)}
+.canvas svg{width:100%;max-width:980px;height:auto;overflow:visible}
+.sk{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.wire rect{fill:var(--grey)}
+.ship-layer text{font-family:Archivo,sans-serif}
+
+.next{border-top:2px solid var(--ink);display:grid;grid-template-columns:repeat(4,1fr)}
+.next a{padding:28px 16px;border-right:2px solid var(--ink);color:var(--ink);text-decoration:none;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;transition:background .2s,color .2s}
+.next a:last-child{border-right:0}
+.next a b{font-size:clamp(22px,2.4vw,34px);font-weight:900;font-variation-settings:"wdth" 115;text-transform:uppercase;line-height:.95}
+.next a:hover{background:var(--ink);color:var(--paper)}
+
+#ink{position:fixed;inset:0;pointer-events:none;z-index:30}
+
+@media (max-width:820px){
+  .rail{grid-template-columns:1fr auto}.rail .tick{display:none}
+  .hero .sub{grid-template-columns:1fr}.hero .sub > *{border-right:0;border-bottom:2px solid var(--ink)}.hero .sub > *:last-child{border-bottom:0}
+  .hero .sub .cta{min-height:60px}
+  .build{grid-template-columns:1fr}.build aside{border-right:0;border-bottom:2px solid var(--ink)}
+  .next{grid-template-columns:1fr 1fr}.next a:nth-child(2){border-right:0}.next a:nth-child(-n+2){border-bottom:2px solid var(--ink)}
+  .scroll-cue{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="ink" aria-hidden="true"></canvas>
+
+<header class="rail mono">
+  <div><b>Tarun Shetty</b></div>
+  <div class="tick" aria-hidden="true"><span>Full-stack developer · Mumbai · SaaS products · Shopify stores · AI features · Internal tools · Live 13:30–17:00 UTC · &nbsp; Full-stack developer · Mumbai · SaaS products · Shopify stores · AI features · Internal tools · Live 13:30–17:00 UTC · &nbsp;</span></div>
+  <a href="#contact">Start a build ↗</a>
+</header>
+
+<section class="hero">
+  <span class="mono scroll-cue">(scroll — watch one get built)</span>
+  <h1 aria-label="You bring the napkin. I bring it back working.">
+    <span class="line"><span>You bring</span></span>
+    <span class="line"><span>the <em>napkin.<svg class="scribble" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true"><path id="scrib" d="M4 26 C 70 8, 140 34, 210 18 S 330 10, 396 22" fill="none" stroke="#121212" stroke-width="6" stroke-linecap="round"/></svg></em></span></span>
+  </h1>
+  <div class="sub">
+    <p>I bring it back working: SaaS products, Shopify stores, AI features and internal tools, built by one developer you talk to directly.</p>
+    <p class="mono" style="font-size:12.5px;line-height:1.6">Mumbai, India<br>Overlaps US mornings &amp; UK/EU afternoons<br>Next.js · Node · Python · Shopify</p>
+    <a class="cta" href="#contact">Show me the napkin →</a>
+  </div>
+</section>
+
+<section class="build" id="build">
+  <aside>
+    <span class="num">01</span>
+    <h2>A SaaS dashboard</h2>
+    <div class="stages mono" role="list">
+      <div class="stage" data-s="0" role="listitem"><span>Sketch</span><span>day 0</span></div>
+      <div class="stage" data-s="1" role="listitem"><span>Wireframe</span><span>day 3</span></div>
+      <div class="stage ship" data-s="2" role="listitem"><span>Shipped</span><span>week 5</span></div>
+    </div>
+    <p>Auth, Stripe billing, one workflow that matters, and a dashboard your first users actually open. You own the repo from the first commit.</p>
+    <div class="proof mono">Proof → <a href="https://github.com/Taruns123/Backend-Chainify">Chainify</a>, an asset registry on Hyperledger Fabric. SaaS starter case study coming.</div>
+  </aside>
+  <div class="canvas">
+    <svg id="board" viewBox="0 0 800 520" role="img" aria-label="A dashboard sketched by hand, then wireframed, then shipped">
+      <g class="wire" id="wire" opacity="0"></g>
+      <g class="ship-layer" id="ship" opacity="0"></g>
+      <g id="sketch"></g>
+    </svg>
+  </div>
+</section>
+
+<nav class="next" id="contact" aria-label="Other builds">
+  <a href="#"><span class="mono">02</span><b>Shopify storefront</b></a>
+  <a href="#"><span class="mono">03</span><b>AI feature</b></a>
+  <a href="#"><span class="mono">04</span><b>Internal tool</b></a>
+  <a href="#" style="background:var(--blue);color:var(--paper)"><span class="mono">Your turn</span><b>Send the napkin ↗</b></a>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script>
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const NS = "http://www.w3.org/2000/svg";
+
+/* --- seeded jitter so the sketch looks hand-drawn but stays stable --- */
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const j = (n) => (rnd() - .5) * n;
+function roughLine(x1,y1,x2,y2,w=3){
+  const mx=(x1+x2)/2+j(w*2), my=(y1+y2)/2+j(w*2);
+  return `M${x1+j(w)} ${y1+j(w)} Q${mx} ${my} ${x2+j(w)} ${y2+j(w)}`;
+}
+function roughRect(x,y,w,h){ return [roughLine(x,y,x+w,y),roughLine(x+w,y,x+w,y+h),roughLine(x+w,y+h,x,y+h),roughLine(x,y+h,x,y)]; }
+function el(tag, attrs, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); parent.appendChild(e); return e; }
+
+/* layout shared by all three layers */
+const L = {
+  frame:[20,20,760,480], side:[20,20,150,480], top:[170,20,610,56],
+  kpis:[[195,100,175,86],[390,100,175,86],[585,100,175,86]],
+  chart:[195,206,565,274]
+};
+const chartPts = [[215,440],[290,410],[360,425],[430,360],[500,375],[570,300],[640,320],[740,240]];
+
+/* sketch layer */
+const sk = document.getElementById("sketch");
+const sketchPaths = [];
+const addSk = d => { const p = el("path",{d,class:"sk"},sk); sketchPaths.push(p); };
+roughRect(...L.frame).forEach(addSk);
+addSk(roughLine(170,20,170,500));
+addSk(roughLine(170,76,780,76));
+[110,150,190,230].forEach(y => addSk(roughLine(45,y,140-j(20),y)));
+L.kpis.forEach(r => { roughRect(...r).forEach(addSk); addSk(roughLine(r[0]+16,r[1]+58,r[0]+90,r[1]+58)); });
+roughRect(...L.chart).forEach(addSk);
+addSk("M" + chartPts.map(p => `${p[0]+j(6)} ${p[1]+j(6)}`).join(" L"));
+addSk(roughLine(560,40,740,40,2)); // search bar scribble
+
+/* wireframe layer */
+const wire = document.getElementById("wire");
+el("rect",{x:20,y:20,width:150,height:480,fill:"#bdb6a5"},wire);
+[110,150,190,230].forEach(y => el("rect",{x:45,y:y-8,width:90,height:14,rx:3},wire));
+L.kpis.forEach(([x,y,w,h]) => { el("rect",{x,y,width:w,height:h,rx:6},wire); });
+el("rect",{x:L.chart[0],y:L.chart[1],width:L.chart[2],height:L.chart[3],rx:6},wire);
+el("rect",{x:560,y:32,width:200,height:20,rx:10},wire);
+
+/* shipped layer */
+const ship = document.getElementById("ship");
+el("rect",{x:20,y:20,width:760,height:480,fill:"#ffffff",stroke:"#121212","stroke-width":2.5},ship);
+el("rect",{x:20,y:20,width:150,height:480,fill:"#121212"},ship);
+el("text",{x:42,y:60,fill:"#ffe14d","font-weight":900,"font-size":18},ship).textContent="ledgerly";
+["Overview","Customers","Billing","Settings"].forEach((t,i)=>{
+  const y=110+i*40;
+  if(i===0) el("rect",{x:32,y:y-20,width:126,height:30,fill:"#2c3bff"},ship);
+  el("text",{x:45,y:y,fill:"#f1ede2","font-size":14,"font-weight":i===0?700:400},ship).textContent=t;
+});
+el("rect",{x:560,y:32,width:200,height:22,rx:11,fill:"#f1ede2"},ship);
+el("text",{x:575,y:48,fill:"#777","font-size":11},ship).textContent="Search customers…";
+el("text",{x:195,y:56,fill:"#121212","font-size":22,"font-weight":800},ship).textContent="Good evening, Priya";
+const kpiData=[["MRR","$",12480,"#2c3bff"],["Active users","",342,"#121212"],["Churn","%",4.1,"#121212"]];
+const counters=[];
+L.kpis.forEach(([x,y,w,h],i)=>{
+  const [label,unit,val,col]=kpiData[i];
+  el("rect",{x,y,width:w,height:h,fill:i===0?"#ffe14d":"#f1ede2",stroke:"#121212","stroke-width":2},ship);
+  el("text",{x:x+14,y:y+24,"font-size":11,fill:"#555","font-family":"IBM Plex Mono"},ship).textContent=label.toUpperCase();
+  const t=el("text",{x:x+14,y:y+64,"font-size":30,"font-weight":900,fill:col},ship);
+  counters.push({t,unit,val});
+});
+el("rect",{x:L.chart[0],y:L.chart[1],width:L.chart[2],height:L.chart[3],fill:"#fff",stroke:"#121212","stroke-width":2},ship);
+el("text",{x:215,y:236,"font-size":11,fill:"#555","font-family":"IBM Plex Mono"},ship).textContent="REVENUE · LAST 8 WEEKS";
+const areaD="M"+chartPts.map(p=>p.join(" ")).join(" L")+` L740 470 L215 470 Z`;
+el("path",{d:areaD,fill:"#2c3bff",opacity:.12},ship);
+const lineShip=el("path",{d:"M"+chartPts.map(p=>p.join(" ")).join(" L"),fill:"none",stroke:"#2c3bff","stroke-width":4,"stroke-linejoin":"round"},ship);
+chartPts.forEach(([x,y],i)=>{ if(i===chartPts.length-1) el("circle",{cx:x,cy:y,r:7,fill:"#2c3bff",stroke:"#fff","stroke-width":3},ship); });
+
+const fmt = (c,v) => c.unit==="$" ? "$"+Math.round(v).toLocaleString("en-US") : c.unit==="%" ? v.toFixed(1)+"%" : Math.round(v).toString();
+function setCounters(p){ counters.forEach(c=>c.t.textContent=fmt(c,c.val*p)); }
+
+/* stroke prep */
+const prep = p => { const L=p.getTotalLength(); p.style.strokeDasharray=L; p.style.strokeDashoffset=L; return L; };
+sketchPaths.forEach(prep);
+const shipLen = prep(lineShip);
+
+const stages=[...document.querySelectorAll(".stage")];
+const setStage = i => stages.forEach((s,k)=>s.classList.toggle("on",k===i));
+
+if (reduce) {
+  sketchPaths.forEach(p=>p.style.strokeDashoffset=0);
+  document.getElementById("sketch").style.opacity=.15;
+  document.getElementById("ship").setAttribute("opacity",1);
+  lineShip.style.strokeDashoffset=0; setCounters(1); setStage(2);
+  document.getElementById("scrib").style.strokeDasharray="none";
+} else {
+  gsap.registerPlugin(ScrollTrigger);
+  const lenis = new Lenis({lerp:.1});
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0);
+
+  /* hero intro */
+  const scrib = document.getElementById("scrib"); prep(scrib);
+  gsap.from(".hero h1 .line > span",{yPercent:110,duration:1.1,ease:"expo.out",stagger:.12,delay:.1});
+  gsap.to(scrib,{strokeDashoffset:0,duration:.9,ease:"power2.inOut",delay:.9});
+  gsap.from(".hero .sub",{y:30,opacity:0,duration:.8,ease:"power3.out",delay:.7});
+
+  /* sketch -> wire -> ship, pinned + scrubbed */
+  setStage(0); setCounters(0);
+  const counter={p:0};
+  const tl = gsap.timeline({
+    scrollTrigger:{trigger:"#build",start:"top top",end:"+=2200",pin:true,scrub:.6,
+      onUpdate:s=>setStage(s.progress<.42?0:s.progress<.68?1:2)}
+  });
+  tl.to(sketchPaths,{strokeDashoffset:0,ease:"none",stagger:.04,duration:.5})
+    .to("#wire",{attr:{opacity:1},duration:.25},"+=.05")
+    .to("#sketch",{opacity:.35,duration:.25},"<")
+    .to("#ship",{attr:{opacity:1},duration:.25},"+=.1")
+    .to("#sketch",{opacity:.08,duration:.2},"<")
+    .to(counter,{p:1,duration:.35,ease:"power1.out",onUpdate:()=>setCounters(counter.p)},"<")
+    .to(lineShip,{strokeDashoffset:0,duration:.35,ease:"power1.inOut"},"<");
+
+  /* ink trail (fine pointers only) */
+  if (matchMedia("(pointer:fine)").matches) {
+    const c=document.getElementById("ink"), x=c.getContext("2d"); let pts=[];
+    const size=()=>{ c.width=innerWidth*devicePixelRatio; c.height=innerHeight*devicePixelRatio; x.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); };
+    size(); addEventListener("resize",size);
+    addEventListener("pointermove",e=>pts.push({x:e.clientX,y:e.clientY,t:performance.now()}));
+    (function draw(){
+      const now=performance.now(); pts=pts.filter(p=>now-p.t<450);
+      x.clearRect(0,0,innerWidth,innerHeight);
+      for(let i=1;i<pts.length;i++){
+        const a=1-(now-pts[i].t)/450;
+        x.strokeStyle=`rgba(18,18,18,${a*.85})`; x.lineWidth=2.4*a; x.lineCap="round";
+        x.beginPath(); x.moveTo(pts[i-1].x,pts[i-1].y); x.lineTo(pts[i].x,pts[i].y); x.stroke();
+      }
+      requestAnimationFrame(draw);
+    })();
+  }
+}
+</script>
+</body>
+</html>
