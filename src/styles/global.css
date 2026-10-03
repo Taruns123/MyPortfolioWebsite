@@ -74,7 +74,7 @@ a { color: inherit; }
   grid-template-rows: auto 1fr auto; column-gap: 48px; row-gap: 24px;
 }
 .hero__intro { grid-area: intro; font-size: clamp(16px, 1.3vw, 20px); line-height: 1.4; max-width: 46ch; font-variation-settings: 'wdth' 92; }
-.hero__intro mark { background: var(--marker); color: var(--ink); font-weight: 800; padding: 0 5px; font-variation-settings: 'wdth' 110; }
+.hero__intro mark { background: var(--marker); color: var(--ink); font-weight: 800; font-size: 1.3em; line-height: 1.1; padding: 0 6px; font-variation-settings: 'wdth' 110; }
 .hero__title {
   grid-area: title; align-self: center; font-weight: 900; font-variation-settings: 'wdth' 125;
   font-size: clamp(44px, 7.4vw, 136px); line-height: .86; letter-spacing: -.035em; text-transform: uppercase;
