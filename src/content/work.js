@@ -38,17 +38,17 @@ export const work = [
   },
   {
     slug: 't-charts',
-    status: 'live',
+    status: 'soon', // flip to 'live' once the rebuilt library is reviewed and the new screenshots are in
     title: 'T-Charts',
     kind: 'Open-source library',
-    year: '', // TODO: confirm
-    summary: 'A React charting library for bar, line and area charts.',
-    stack: ['React', 'SVG', 'Rollup'],
+    year: '2026',
+    summary: 'A small React charting library (line, area, bar) with tooltips, keyboard navigation and a live playground. Being rebuilt.',
+    stack: ['React', 'TypeScript', 'SVG', 'Rollup'],
     repo: 'https://github.com/Taruns123/charts-react',
-    images: ['/assets/project-ss/t-charts-1.jpg', '/assets/project-ss/t-charts-2.jpg'],
+    images: [],
     sections: [
       ['The problem', 'Off-the-shelf chart libraries were either too heavy or too rigid for the custom dashboards I was building.'],
-      ['What I built', 'A small, composable React charting library for bar, line and area charts with full control over styling, published as open source.'],
+      ['What I built', 'A composable React charting library: line, area and bar charts with smoothing, stacking, gradients, a crosshair tooltip and keyboard navigation, about 9 KB gzipped, plus a docs site with a live playground.'],
       ['What it shows', 'Dashboards are most of what SaaS products are. I know how to make data readable, and how to package code so other developers can use it.'],
     ],
   },

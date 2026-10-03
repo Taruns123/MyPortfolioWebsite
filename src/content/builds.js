@@ -13,7 +13,7 @@ export const builds = [
     stack: 'Next.js · Node · Postgres · Stripe',
     time: '4–6 weeks',
     stages: ['day 0', 'day 3', 'week 5'],
-    proof: { label: 'T-Charts', to: '/work/t-charts', note: 'the charting behind dashboards like this' },
+    proof: { label: "SaaS starter", to: null, note: "case study in progress" },
   },
   {
     key: 'store',
