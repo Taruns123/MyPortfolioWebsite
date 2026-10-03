@@ -2,6 +2,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react'
 import { process } from '../content/site.js'
 import { makeRough } from '../lib/sketch.js'
 import { gsap, prefersReducedMotion } from '../lib/motion.jsx'
+import { rich } from '../lib/rich.jsx'
 
 const XS = [150, 450, 750, 1050]
 
@@ -24,6 +25,21 @@ export default function Process() {
       tl.to(main, { strokeDashoffset: 0, ease: 'none', duration: 1 })
       circles.forEach((c, i) => tl.to(c, { strokeDashoffset: 0, duration: 0.12 }, (XS[i] - 30) / 1140 - 0.02))
       gsap.from('.step', { y: 50, opacity: 0, duration: 0.8, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '.steps', start: 'top 80%' } })
+
+      // cards tilt toward the pointer like a sheet of card you're nudging
+      if (window.matchMedia('(pointer: fine)').matches) {
+        gsap.utils.toArray('.step').forEach((card) => {
+          gsap.set(card, { transformPerspective: 900 })
+          const rx = gsap.quickTo(card, 'rotationX', { duration: 0.5, ease: 'power3' })
+          const ry = gsap.quickTo(card, 'rotationY', { duration: 0.5, ease: 'power3' })
+          card.addEventListener('pointermove', (e) => {
+            const r = card.getBoundingClientRect()
+            ry(((e.clientX - r.left) / r.width - 0.5) * 14)
+            rx(((e.clientY - r.top) / r.height - 0.5) * -14)
+          })
+          card.addEventListener('pointerleave', () => { rx(0); ry(0) })
+        })
+      }
     }, root)
     return () => ctx.revert()
   }, [])
@@ -43,7 +59,7 @@ export default function Process() {
           <li className="step" key={s.n}>
             <div className="step__top mono"><span>{s.n}</span><span>{s.time}</span></div>
             <h3>{s.title}</h3>
-            <p>{s.body}</p>
+            <p>{rich(s.body)}</p>
           </li>
         ))}
       </ol>

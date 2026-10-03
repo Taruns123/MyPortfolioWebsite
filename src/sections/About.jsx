@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { about } from '../content/site.js'
 import { makeRough } from '../lib/sketch.js'
+import { rich } from '../lib/rich.jsx'
 
 export default function About() {
   const frame = useMemo(() => makeRough(23).rect(8, 8, 384, 464, 6), [])
@@ -17,7 +18,7 @@ export default function About() {
       <div className="about__text">
         <span className="mono">About</span>
         <h2>{about.title}</h2>
-        {about.paragraphs.map((p) => <p key={p.slice(0, 20)}>{p}</p>)}
+        {about.paragraphs.map((p) => <p key={p.slice(0, 20)}>{rich(p)}</p>)}
         <dl className="about__facts mono">
           {about.facts.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
         </dl>

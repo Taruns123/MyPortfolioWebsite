@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { work } from '../content/work.js'
 import { Go } from '../components/Transition.jsx'
 import { gsap } from '../lib/motion.jsx'
+import Scribble from '../components/Scribble.jsx'
 
 /** Index of real work. On desktop a screenshot follows the cursor over each row. */
 export default function Work() {
@@ -12,7 +13,14 @@ export default function Work() {
     if (!window.matchMedia('(pointer: fine)').matches) return
     const xTo = gsap.quickTo(peek.current, 'x', { duration: 0.45, ease: 'power3' })
     const yTo = gsap.quickTo(peek.current, 'y', { duration: 0.45, ease: 'power3' })
-    const move = (e) => { xTo(e.clientX + 24); yTo(e.clientY - 90) }
+    const rTo = gsap.quickTo(peek.current, 'rotation', { duration: 0.6, ease: 'power3' })
+    let lastX = 0
+    const move = (e) => {
+      // flip to the left of the pointer near the right edge so it never leaves the screen
+      xTo(e.clientX > innerWidth - 360 ? e.clientX - 344 : e.clientX + 24); yTo(e.clientY - 90)
+      rTo(gsap.utils.clamp(-14, 14, (e.clientX - lastX) * 0.8)) // lean into the direction of travel
+      lastX = e.clientX
+    }
     addEventListener('pointermove', move)
     return () => removeEventListener('pointermove', move)
   }, [])
@@ -32,12 +40,12 @@ export default function Work() {
               <span className="work__title">{w.title}</span>
               <span className="work__summary">{w.summary}</span>
               <span className="mono work__kind">{w.kind}</span>
-              <span className="mono work__go">{live ? 'Read →' : 'Soon'}</span>
+              <span className="mono work__go">{live ? <>Read →<Scribble variant="circle" /></> : 'Soon'}</span>
             </>
           )
           return (
             <li key={w.slug} className={live ? '' : 'is-soon'} onPointerEnter={() => setImg(live ? w.images[0] : null)}>
-              {live ? <Go to={`/work/${w.slug}`} className="work__row">{inner}</Go> : <div className="work__row">{inner}</div>}
+              {live ? <Go to={`/work/${w.slug}`} className="work__row" data-cursor="read">{inner}</Go> : <div className="work__row">{inner}</div>}
             </li>
           )
         })}

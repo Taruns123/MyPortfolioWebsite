@@ -56,7 +56,7 @@ export default function CaseStudy() {
         ))}
       </div>
 
-      <Go to={`/work/${next.slug}`} className="cs__next">
+      <Go to={`/work/${next.slug}`} className="cs__next" data-cursor="next">
         <span className="mono">Next</span>
         <span>{next.title} →</span>
       </Go>

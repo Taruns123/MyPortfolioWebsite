@@ -52,7 +52,7 @@ export default function Hero() {
             <div key={t}><Typed text={t} prompt=">" onMount delay={900 + i * 900} speed={22} caret={i === hero.terminal.length - 1} /></div>
           ))}
         </div>
-        <Go to="/#contact" className="hero__cta">{hero.cta} →</Go>
+        <Go to="/#contact" className="hero__cta" data-cursor="say hi" data-magnetic>{hero.cta} →</Go>
       </div>
     </section>
   )

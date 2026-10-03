@@ -19,7 +19,10 @@ export default function InkTrail() {
       c.height = innerHeight * dpr
       x.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
-    const move = (e) => pts.push({ x: e.clientX, y: e.clientY, t: performance.now() })
+    const move = (e) => {
+      if (e.buttons && e.target.closest?.('.napkin-pad__svg')) return // the napkin has its own ink
+      pts.push({ x: e.clientX, y: e.clientY, t: performance.now() })
+    }
     const draw = () => {
       const now = performance.now()
       pts = pts.filter((p) => now - p.t < LIFE)

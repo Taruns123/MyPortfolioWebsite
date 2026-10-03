@@ -106,7 +106,7 @@ export default function BuildSection({ build }) {
           Proof → {proof.to ? <Go to={proof.to}>{proof.label}</Go> : <b>{proof.label}</b>} · {proof.note}
         </p>
       </aside>
-      <div className="build__canvas">
+      <div className="build__canvas" data-cursor="scroll">
         <svg className="board" viewBox="0 0 800 520" role="img" aria-label={`${build.title}: sketched by hand, wireframed, then shipped`}>
           <g className="wire-layer">{wire.map(([x, y, w, h], i) => <rect key={i} x={x} y={y} width={w} height={h} rx="5" />)}</g>
           <g className="ship-layer"><Ship /></g>

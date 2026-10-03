@@ -50,10 +50,10 @@ export const ticker = [
 export const process = {
   title: 'How a napkin becomes a product',
   steps: [
-    { n: '01', title: 'Napkin call', time: '20 min', body: 'You tell me what it should do and who it is for. I ask the awkward questions early: budget, deadline, what happens if it works.' },
-    { n: '02', title: 'Written scope', time: '2 days', body: 'One page: what ships, what does not, the fixed price and the milestones. Nothing starts until you have agreed to it in writing.' },
-    { n: '03', title: 'Weekly demos', time: 'every Friday', body: 'You click through real software on a staging URL each week, not a status report. Changes go in the next sprint, not the next invoice.' },
-    { n: '04', title: 'Handover', time: 'day one, really', body: 'The repo, hosting and accounts are in your name from the start. You get docs, a recorded walkthrough and a bug-fix window.' },
+    { n: '01', title: 'Napkin call', time: '20 min', body: 'You tell me what it should do and who it is for. I ask ==the awkward questions early==: budget, deadline, what happens if it works.' },
+    { n: '02', title: 'Written scope', time: '2 days', body: 'One page: what ships, what does not, ==the fixed price== and the milestones. Nothing starts until you have agreed to it in writing.' },
+    { n: '03', title: 'Weekly demos', time: 'every Friday', body: 'You click through ==real software== on a staging URL each week, not a status report. Changes go in the next sprint, not the next invoice.' },
+    { n: '04', title: 'Handover', time: 'day one, really', body: 'The repo, hosting and accounts are ==in your name from the start==. You get docs, a recorded walkthrough and a bug-fix window.' },
   ],
   facts: [
     ['Price', 'Fixed, in milestones'],
@@ -67,7 +67,7 @@ export const about = {
   title: 'Hi, I’m Tarun.',
   paragraphs: [
     'I have spent about two and a half years shipping production web software: a make-to-order supply chain platform in React at Vector Consulting, and before that Angular and Next.js client work at Pixolo.',
-    'Now I build for founders and small teams directly. I take two projects at a time so each one gets proper attention, and I would rather ship one thing that works than five that almost do.',
+    'Now I build for founders and small teams directly. I take two projects at a time so each one gets proper attention, and I would rather ==ship one thing that works== than five that almost do.',
     'Outside of client work I build things to learn: a charting library, a blockchain land registry, a restaurant billing app. They are below.',
   ],
   // Swap for a real photo at /public/assets/tarun.jpg and set photo: '/assets/tarun.jpg'

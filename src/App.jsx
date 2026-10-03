@@ -4,6 +4,7 @@ import { ScrollProvider, ScrollTrigger } from './lib/motion.jsx'
 import { TransitionProvider } from './components/Transition.jsx'
 import Rail from './components/Rail.jsx'
 import InkTrail from './components/InkTrail.jsx'
+import Cursor from './components/Cursor.jsx'
 import Footer from './sections/Footer.jsx'
 import Home from './pages/Home.jsx'
 import CaseStudy from './pages/CaseStudy.jsx'
@@ -26,6 +27,7 @@ export default function App() {
         <a className="skip mono" href="#main">Skip to content</a>
         <Rail />
         <InkTrail />
+        <Cursor />
         <RefreshOnRoute />
         <div id="main">
           <Routes>

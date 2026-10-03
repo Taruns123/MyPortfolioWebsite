@@ -269,6 +269,7 @@ export default function NapkinPad() {
           viewBox={`0 0 ${V} ${V}`}
           role="img"
           aria-label="A paper napkin you can draw on. Boxes, lines, circles and zigzags turn into real interface components."
+          data-cursor="draw"
           onPointerDown={down}
           onPointerMove={move}
           onPointerUp={up}
@@ -292,8 +293,8 @@ export default function NapkinPad() {
         <span className="napkin-pad__status" role="status">{status || (shapes.length ? `${shapes.length} shape${shapes.length > 1 ? 's' : ''} sketched` : 'your napkin')}</span>
         <span className="napkin-pad__actions">
           {stage === 'draw' && shapes.length > 0 && <button className="np-btn np-btn--go" onClick={build}>Build it →</button>}
-          {stage !== 'draw' || strokes.length ? <button className="np-btn" onClick={reset}>Clear</button> : null}
-          <button className="np-btn" onClick={drawForMe}>Draw for me</button>
+          {stage !== 'draw' || strokes.length ? <button className="np-btn" data-magnetic onClick={reset}>Clear</button> : null}
+          <button className="np-btn" data-magnetic onClick={drawForMe}>Draw for me</button>
         </span>
       </div>
     </div>

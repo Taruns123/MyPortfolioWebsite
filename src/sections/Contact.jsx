@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { contact, profile } from '../content/site.js'
 import Typed from '../components/Typed.jsx'
+import { gsap, prefersReducedMotion } from '../lib/motion.jsx'
 
 const initial = { name: '', email: '', kind: '', budget: '', message: '' }
 
@@ -8,6 +9,23 @@ export default function Contact() {
   const [form, setForm] = useState(initial)
   const [status, setStatus] = useState('idle') // idle | sending | sent | failed
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
+  const plane = useRef(null)
+
+  // The napkin folds into a paper plane and flies off.
+  const fly = () => {
+    if (prefersReducedMotion()) return
+    gsap.timeline()
+      .set(plane.current, { display: 'block', x: 0, y: 0, rotation: 0, scale: 0.4, opacity: 1 })
+      .to(plane.current, { scale: 1, rotation: -12, duration: 0.25, ease: 'back.out(2)' })
+      .to(plane.current, {
+        keyframes: [
+          { x: 160, y: -60, rotation: -24, duration: 0.35 },
+          { x: 300, y: -40, rotation: 8, duration: 0.3 },
+          { x: 900, y: -420, rotation: -34, opacity: 0, duration: 0.7, ease: 'power2.in' },
+        ],
+      })
+      .set(plane.current, { display: 'none' })
+  }
 
   const submit = async (e) => {
     e.preventDefault()
@@ -28,6 +46,7 @@ export default function Contact() {
         import.meta.env.VITE_APP_EMAILJS_PUBLIC_KEY,
       )
       setStatus('sent')
+      fly()
       setForm(initial)
     } catch (err) {
       console.error(err)
@@ -84,7 +103,10 @@ export default function Contact() {
             <input required type="email" autoComplete="email" value={form.email} onChange={set('email')} />
           </label>
         </div>
-        <button className="napkin__send" disabled={status === 'sending'}>
+        <svg className="napkin__plane" ref={plane} viewBox="0 0 64 40" aria-hidden="true">
+          <path d="M2 20 L62 2 L40 38 L30 24 Z M30 24 L62 2" />
+        </svg>
+        <button className="napkin__send" data-magnetic data-cursor="send" disabled={status === 'sending'}>
           {status === 'sending' ? 'Sending…' : 'Send it →'}
         </button>
         <p className="napkin__status mono" role="status">
