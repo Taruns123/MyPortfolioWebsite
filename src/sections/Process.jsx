@@ -23,7 +23,8 @@ export default function Process() {
       const [main, ...circles] = paths
       const tl = gsap.timeline({ scrollTrigger: { trigger: '.process__line', start: 'top 80%', end: 'top 25%', scrub: 0.5 } })
       tl.to(main, { strokeDashoffset: 0, ease: 'none', duration: 1 })
-      circles.forEach((c, i) => tl.to(c, { strokeDashoffset: 0, duration: 0.12 }, (XS[i] - 30) / 1140 - 0.02))
+      gsap.set(circles, { opacity: 0 }) // undrawn round caps would show as stray dots
+      circles.forEach((c, i) => tl.to(c, { strokeDashoffset: 0, opacity: 1, duration: 0.12 }, (XS[i] - 30) / 1140 - 0.02))
       gsap.from('.step', { y: 50, opacity: 0, duration: 0.8, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '.steps', start: 'top 80%' } })
 
       // cards tilt toward the pointer like a sheet of card you're nudging

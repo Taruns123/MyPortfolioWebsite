@@ -44,7 +44,7 @@ export default function Work() {
             </>
           )
           return (
-            <li key={w.slug} className={live ? '' : 'is-soon'} onPointerEnter={() => setImg(live ? w.images[0] : null)}>
+            <li key={w.slug} className={live ? '' : 'is-soon'} onPointerEnter={() => setImg(live ? w.shots[0].src : null)}>
               {live ? <Go to={`/work/${w.slug}`} className="work__row" data-cursor="read">{inner}</Go> : <div className="work__row">{inner}</div>}
             </li>
           )
