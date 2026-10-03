@@ -68,22 +68,27 @@ a { color: inherit; }
    Hero
    ========================================================================== */
 .hero {
-  min-height: 100svh; padding: calc(var(--rail-h) + 56px) var(--gutter) 32px;
-  display: grid; grid-template-rows: 1fr auto; gap: 32px; position: relative;
+  min-height: 100svh; padding: calc(var(--rail-h) + 32px) var(--gutter) 28px;
+  display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+  grid-template-areas: "intro pad" "title pad" "sub sub";
+  grid-template-rows: auto 1fr auto; column-gap: 48px; row-gap: 24px;
 }
-.hero__cue { position: absolute; right: var(--gutter); top: calc(var(--rail-h) + 22px); }
+.hero__intro { grid-area: intro; font-size: clamp(16px, 1.3vw, 20px); line-height: 1.4; max-width: 46ch; font-variation-settings: 'wdth' 92; }
+.hero__intro mark { background: var(--marker); color: var(--ink); font-weight: 800; padding: 0 5px; font-variation-settings: 'wdth' 110; }
 .hero__title {
-  align-self: center; font-weight: 900; font-variation-settings: 'wdth' 125;
-  font-size: clamp(46px, 10.4vw, 190px); line-height: .86; letter-spacing: -.035em; text-transform: uppercase;
+  grid-area: title; align-self: center; font-weight: 900; font-variation-settings: 'wdth' 125;
+  font-size: clamp(44px, 7.4vw, 136px); line-height: .86; letter-spacing: -.035em; text-transform: uppercase;
 }
 .hero__line { display: block; overflow: hidden; padding-bottom: .05em; }
 .hero__line > span { display: inline-block; }
 .hero__title em { font-style: normal; color: var(--blue); position: relative; display: inline-block; white-space: nowrap; }
 .scribble { position: absolute; left: -2%; bottom: -.06em; width: 104%; height: .32em; overflow: visible; color: var(--ink); }
-.hero__sub { display: grid; grid-template-columns: 1.2fr 1fr auto; border: var(--rule); }
+.hero__pad { grid-area: pad; align-self: center; justify-self: center; width: min(100%, 60vh, 580px); position: relative; }
+.hero__cue { position: absolute; right: 0; top: -26px; }
+.hero__sub { grid-area: sub; display: grid; grid-template-columns: 1.2fr 1fr auto; border: var(--rule); }
 .hero__sub > * { padding: 16px; border-right: var(--rule); }
 .hero__sub > *:last-child { border-right: 0; }
-.hero__lede { font-size: clamp(17px, 1.5vw, 22px); line-height: 1.3; font-variation-settings: 'wdth' 90; }
+.hero__lede { font-size: clamp(17px, 1.4vw, 21px); line-height: 1.3; font-variation-settings: 'wdth' 90; }
 .hero__term { font-size: 12.5px; line-height: 1.75; text-transform: none; }
 .hero__cta {
   display: flex; align-items: center; justify-content: center; min-width: 200px;
@@ -91,6 +96,37 @@ a { color: inherit; }
   font-weight: 800; font-variation-settings: 'wdth' 110; font-size: 18px; transition: background .2s;
 }
 .hero__cta:hover { background: var(--blue); }
+
+/* the napkin */
+.napkin-pad { width: 100%; }
+.napkin-pad__sheet { position: relative; aspect-ratio: 1; }
+.napkin-pad__sheet::before {
+  content: ''; position: absolute; inset: 0; background: #f8f4ea; border: 1.5px solid rgba(18, 18, 18, .18);
+  transform: rotate(4.5deg) translate(10px, 4px);
+}
+.napkin-pad__svg {
+  position: relative; width: 100%; height: 100%; touch-action: none; cursor: crosshair; user-select: none;
+  border: var(--rule); box-shadow: 10px 10px 0 var(--ink);
+  background:
+    linear-gradient(90deg, transparent calc(50% - 1px), rgba(18, 18, 18, .06) 50%, rgba(255, 255, 255, .7) calc(50% + 1px), transparent calc(50% + 3px)),
+    linear-gradient(0deg, transparent calc(50% - 1px), rgba(18, 18, 18, .06) 50%, rgba(255, 255, 255, .7) calc(50% + 1px), transparent calc(50% + 3px)),
+    #fdfbf6;
+}
+.napkin-pad__svg text { font-family: var(--sans); }
+.napkin-pad__emboss { fill: none; stroke: #e4ddcc; stroke-width: 3; stroke-dasharray: 1 7; stroke-linecap: round; }
+.napkin-pad__coffee { fill: none; stroke: rgba(130, 82, 36, .16); stroke-width: 9; stroke-linecap: round; }
+.napkin-pad__hint text { font-size: 38px; font-weight: 800; font-variation-settings: 'wdth' 110; fill: rgba(18, 18, 18, .22); text-transform: uppercase; }
+.napkin-pad__hint .napkin-pad__hint-sub { font: 500 15px var(--mono); text-transform: none; fill: rgba(18, 18, 18, .45); }
+.np-strokes path, .np-live { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+.np-wire-item rect, .np-wire-item circle { fill: var(--grey); }
+.np-tag { font: 600 14px var(--mono) !important; fill: var(--blue); }
+.napkin-pad__bar { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; margin-top: 22px; min-height: 76px; align-content: flex-start; text-transform: none; }
+.napkin-pad__status { min-height: 1.4em; }
+.napkin-pad__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.np-btn { font: 600 12.5px var(--mono); padding: 8px 12px; border: var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; transition: transform .15s, box-shadow .15s, background .15s; }
+.np-btn:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+.np-btn--go { background: var(--blue); color: #fff; animation: nudge 1.6s ease-in-out infinite; }
+@keyframes nudge { 50% { box-shadow: 4px 4px 0 var(--ink); transform: translate(-2px, -2px); } }
 
 .typed__prompt { color: var(--blue); font-weight: 600; }
 .typed__caret { display: inline-block; width: .55em; height: 1.05em; margin-left: 2px; vertical-align: -.17em; background: var(--blue); animation: blink 1s steps(1) infinite; }
@@ -279,6 +315,8 @@ a.work__row:hover { background: var(--ink); color: var(--paper); padding-left: c
 @media (max-width: 899px) {
   .rail { grid-template-columns: 1fr auto; }
   .rail__nav { display: none; }
+  .hero { grid-template-columns: 1fr; grid-template-areas: "intro" "title" "pad" "sub"; grid-template-rows: auto auto auto auto; row-gap: 28px; }
+  .hero__pad { width: 100%; }
   .hero__cue { display: none; }
   .hero__title { font-size: 12.4vw; }
   .hero__sub { grid-template-columns: 1fr; }
@@ -320,6 +358,6 @@ a.work__row:hover { background: var(--ink); color: var(--paper); padding-left: c
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ticker__track, .typed__caret { animation: none; }
+  .ticker__track, .typed__caret, .np-btn--go { animation: none; }
   *, *::before, *::after { transition-duration: .01ms !important; }
 }

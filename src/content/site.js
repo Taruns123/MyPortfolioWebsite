@@ -26,15 +26,16 @@ export const nav = [
 ]
 
 export const hero = {
+  intro: { name: 'Tarun Shetty', line: 'full-stack developer in Mumbai. I build SaaS products, Shopify stores, AI features and internal tools for founders and small teams.' },
   lines: ['You bring', 'the', 'napkin.'], // last word gets the blue + scribble
-  sub: 'I bring it back working: SaaS products, Shopify stores, AI features and internal tools, built by one developer you talk to directly.',
+  sub: 'I bring it back working. Fixed price, a demo every week, and the code is yours from the first commit.',
   terminal: [
-    'mumbai, india',
+    '2+ years shipping production web apps',
     'live 13:30–17:00 utc · us mornings, uk/eu afternoons',
     'next.js · node · python · shopify',
   ],
   cta: 'Show me the napkin',
-  cue: '(scroll — watch four get built)',
+  cue: '(try the napkin →)',
 }
 
 export const ticker = [
