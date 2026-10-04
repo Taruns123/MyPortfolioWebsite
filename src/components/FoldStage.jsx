@@ -248,12 +248,12 @@ export default function FoldStage() {
   const box = (i) => ({ width: sizes[i][0], height: sizes[i][1] })
   const onTimeline = (tl) => { liveTl.current = tl }
   // each fold leaves one more layer of napkin under the top face (the first few show)
-  const stack = Array.from({ length: Math.min(n, 4) }, (_, i) => `${(i + 1) * 2}px ${(i + 1) * 2}px 0 ${i % 2 ? '#d8d0bc' : '#e6dfcd'}`)
+  const stack = Array.from({ length: Math.min(n, 4) }, (_, i) => `drop-shadow(${i % 2 ? 1 : 2}px ${i % 2 ? 2 : 1}px 0 ${i % 2 ? '#d8d0bc' : '#e6dfcd'})`)
 
   return (
     <section className="fold" ref={root} aria-label="Tarun Shetty, full-stack developer">
       <div className="fold__desk" ref={desk}>
-        <div className={`nap nap--${f.axis}`} ref={nap} style={{ width: w, height: h, '--stack': stack.length ? stack.join(', ') + ',' : '' }}>
+        <div className={`nap nap--${f.axis}`} ref={nap} style={{ width: w, height: h, '--stack': stack.join(' ') }}>
           <div className="nap__live" ref={live} data-o={orient(sizes[n])}>
             <Fragment key={n}>{n < FACES.length ? FACES[n].render({ still: false, at: 0, onTimeline }) : <Blank />}</Fragment>
           </div>

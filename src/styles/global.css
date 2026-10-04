@@ -272,13 +272,13 @@ a.work__row:hover { background: var(--ink); color: var(--paper); padding-left: c
 .envelope__flip:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
 .envelope__sent { position: absolute; left: 50%; top: 50%; translate: -50% -50%; padding: 14px 22px; border: 4px double #c0392b; color: #c0392b; font-size: 28px; font-weight: 600; letter-spacing: .12em; transform: rotate(-12deg); opacity: 0; pointer-events: none; }
 .envelope__sent.is-on { opacity: 1; }
-.envelope__back.napkin { transform: rotateY(180deg); padding: 120px 32px 32px; background: repeating-linear-gradient(0deg, transparent 0 31px, rgba(44, 59, 255, .08) 31px 32px), var(--grain), #fbf8f0; }
+.envelope__back { transform: rotateY(180deg); }
 .envelope__flap { position: absolute; top: 0; left: 0; right: 0; height: 96px; background: var(--ink); clip-path: polygon(0 0, 100% 0, 50% 100%); }
 .envelope__flap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #efe3c6, #e2d0a6); clip-path: polygon(0.4% 0, 99.6% 0, 50% calc(100% - 3px)); }
 .envelope__actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 
 @media (prefers-reduced-motion: reduce) {
-  .envelope__back.napkin { transform: none; }
+  .envelope__back { transform: none; }
   .envelope__card.is-flipped .envelope__front { display: none; }
   .envelope__card:not(.is-flipped) .envelope__back { display: none; }
 }
@@ -640,5 +640,107 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 .contact--stage .contact__direct, .contact--stage .contact__direct a { color: var(--paper); }
 .contact--stage .envelope { width: min(860px, 80vw); }
 .contact--stage .envelope__front { min-height: 0; }
-.contact--stage .envelope__back.napkin { padding: 96px 28px 20px; gap: 14px; }
-.contact--stage .field textarea { min-height: 90px; }
+
+/* ==========================================================================
+   Natural paper: soft wavy edges, fibres, uneven light, a lifted corner
+   ========================================================================== */
+:root {
+  --edge-t: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 5' preserveAspectRatio='none'%3E%3Cpath d='M0 2.25 Q31.2 3.07 62.5 2.59 Q93.8 3.39 125.0 3.76 Q156.2 3.19 187.5 2.29 Q218.8 1.88 250.0 2.43 Q281.2 1.88 312.5 2.68 Q343.8 2.07 375.0 1.39 Q406.2 1.30 437.5 2.44 Q468.8 2.20 500.0 2.82 Q531.2 2.72 562.5 3.34 Q593.8 1.56 625.0 1.1 Q656.2 1.38 687.5 1.77 Q718.8 1.35 750.0 1.09 Q781.2 2.72 812.5 3.39 Q843.8 3.23 875.0 3.02 Q906.2 2.17 937.5 0.93 Q968.8 2.43 1000.0 3.94 V5 H0 Z'/%3E%3C/svg%3E");
+  --edge-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 5' preserveAspectRatio='none'%3E%3Cpath transform='matrix%281 0 0 -1 0 5%29' d='M0 2.92 Q31.2 1.89 62.5 2.26 Q93.8 1.57 125.0 1.69 Q156.2 3.41 187.5 3.99 Q218.8 3.95 250.0 3.99 Q281.2 4.41 312.5 3.49 Q343.8 3.13 375.0 3.06 Q406.2 1.84 437.5 1.81 Q468.8 1.85 500.0 1.53 Q531.2 2.01 562.5 1.72 Q593.8 1.05 625.0 1.02 Q656.2 1.56 687.5 3.25 Q718.8 2.43 750.0 2.08 Q781.2 3.44 812.5 3.51 Q843.8 3.14 875.0 2.04 Q906.2 2.42 937.5 3.87 Q968.8 3.33 1000.0 3.51 V5 H0 Z'/%3E%3C/svg%3E");
+  --edge-l: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 1000' preserveAspectRatio='none'%3E%3Cpath transform='matrix%280 1 1 0 0 0%29' d='M0 1.12 Q31.2 1.59 62.5 0.99 Q93.8 1.76 125.0 3.35 Q156.2 2.21 187.5 1.37 Q218.8 2.48 250.0 2.59 Q281.2 2.61 312.5 2.23 Q343.8 1.26 375.0 1.41 Q406.2 2.96 437.5 3.14 Q468.8 1.78 500.0 1.22 Q531.2 1.70 562.5 2.86 Q593.8 2.40 625.0 1.17 Q656.2 1.42 687.5 2.15 Q718.8 1.53 750.0 1.48 Q781.2 0.97 812.5 1.66 Q843.8 2.21 875.0 3.91 Q906.2 3.76 937.5 3.37 Q968.8 2.21 1000.0 1.77 V5 H0 Z'/%3E%3C/svg%3E");
+  --edge-r: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 1000' preserveAspectRatio='none'%3E%3Cpath transform='matrix%280 1 -1 0 5 0%29' d='M0 2.72 Q31.2 2.89 62.5 1.99 Q93.8 2.26 125.0 2.25 Q156.2 2.95 187.5 3.87 Q218.8 2.56 250.0 2.35 Q281.2 1.85 312.5 2.64 Q343.8 3.75 375.0 3.57 Q406.2 2.11 437.5 1.39 Q468.8 1.63 500.0 1.29 Q531.2 2.16 562.5 3.71 Q593.8 4.02 625.0 3.42 Q656.2 2.65 687.5 1.6 Q718.8 1.22 750.0 1.41 Q781.2 1.84 812.5 3.17 Q843.8 3.80 875.0 3.81 Q906.2 2.02 937.5 1.43 Q968.8 2.25 1000.0 3.84 V5 H0 Z'/%3E%3C/svg%3E");
+  --fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.09 .6' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .36 0 0 0 0 .25 0 0 0 .3 -.11'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E");
+  --paper-edge:
+    linear-gradient(#000 0 0) center / calc(100% - 10px) calc(100% - 10px) no-repeat,
+    var(--edge-t) top / calc(100% - 10px) 5px no-repeat, var(--edge-b) bottom / calc(100% - 10px) 5px no-repeat,
+    var(--edge-l) left / 5px calc(100% - 10px) no-repeat, var(--edge-r) right / 5px calc(100% - 10px) no-repeat;
+  --ink-hand: #1d2b8f;
+  --hand: 'Caveat Variable', 'Caveat', 'Bradley Hand', cursive;
+}
+.nap { background: none; box-shadow: none; filter: var(--stack,) drop-shadow(0 1px 1px rgba(0, 0, 30, .3)) drop-shadow(0 22px 26px rgba(0, 0, 30, .32)); }
+.nap.is-folding { filter: none; }
+.nap__live, .nap__keep, .nap__side, .env3d__packet { -webkit-mask: var(--paper-edge); mask: var(--paper-edge); }
+.nap__keepshadow { box-shadow: 0 2px 2px rgba(0, 0, 30, .25), 0 22px 30px rgba(0, 0, 30, .3); }
+.nap section, .fold__blank { background: var(--fibre), var(--grain), var(--emboss), var(--paper); }
+/* a napkin never lies perfectly flat: soft light and shade across it */
+.nap__live::after, .nap__face::after {
+  content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 28% 18%, rgba(255, 255, 255, .22), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 82% 88%, rgba(110, 90, 50, .09), transparent 70%),
+    linear-gradient(315deg, rgba(255, 255, 255, .35) 0, rgba(255, 255, 255, 0) 70px);
+}
+/* the bottom-right corner lifts a little: its shadow falls further */
+.nap::before { content: ''; position: absolute; right: 12px; bottom: 14px; width: 38%; height: 40px; z-index: -1; box-shadow: 0 20px 18px rgba(0, 0, 30, .38); transform: rotate(2.5deg) skewX(-6deg); }
+.nap.is-folding::before { display: none; }
+
+/* ==========================================================================
+   Natural envelope: kraft paper, soft edges, handwriting
+   ========================================================================== */
+.envelope__face {
+  border: 1px solid rgba(110, 82, 36, .35); border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 30, .2), 0 18px 34px rgba(0, 0, 30, .32), inset 0 0 0 1px rgba(255, 255, 255, .25);
+}
+.envelope__front, .envelope__back.letter, .env3d__front .envelope__face {
+  background: var(--fibre), var(--grain), radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, .25), transparent 65%), linear-gradient(160deg, #ecdcb7, #e0cb9e);
+}
+.envelope__from { display: flex; align-items: baseline; gap: 10px; }
+.envelope__from span { font: 600 30px var(--hand); color: var(--ink-hand); border-bottom: 1px dotted rgba(18, 18, 18, .45); padding: 0 50px 0 6px; text-transform: none; transform: rotate(-1.5deg); }
+.envelope__to strong { font: 700 clamp(44px, 5vw, 66px)/1 var(--hand); color: var(--ink-hand); text-transform: none; letter-spacing: 0; border-bottom: 1px solid rgba(18, 18, 18, .4); padding: 0 0 2px 8px; transform: rotate(-2deg); transform-origin: left; }
+.envelope__to span:not(.mono) { font: 500 30px/1.25 var(--hand); color: var(--ink-hand); border-bottom: 1px solid rgba(18, 18, 18, .3); padding: 2px 0 0 14px; }
+.envelope__to span:nth-of-type(3) { transform: rotate(-1deg); }
+.envelope__flip { background: rgba(255, 255, 255, .35); border: 1px solid rgba(18, 18, 18, .5); border-radius: 3px; }
+.envelope__flip:hover { box-shadow: 2px 2px 0 rgba(18, 18, 18, .6); }
+.envelope__stamp rect { stroke: rgba(18, 18, 18, .7); stroke-width: 2; }
+.envelope__flap { background: rgba(110, 82, 36, .5); }
+.envelope__flap::after { background: var(--fibre), linear-gradient(180deg, #efe1c0, #e2cd9f); clip-path: polygon(0.2% 0, 99.8% 0, 50% calc(100% - 1.5px)); }
+
+/* the letter side: pre-printed labels, filled in by hand */
+.letter { padding: 104px 34px 22px; display: flex; flex-direction: column; gap: 16px; }
+.letter__row { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+.hand { display: grid; gap: 0; }
+.hand > .mono, .ticks legend { font-size: 11px; color: rgba(18, 18, 18, .62); letter-spacing: .08em; }
+.hand input, .hand textarea {
+  font: 500 28px/34px var(--hand); color: var(--ink-hand); background: transparent; border: 0; border-radius: 0; padding: 0 4px; width: 100%;
+  border-bottom: 1px dotted rgba(18, 18, 18, .5); caret-color: var(--ink-hand);
+}
+.hand input::placeholder, .hand textarea::placeholder { color: rgba(29, 43, 143, .28); }
+.hand textarea { resize: none; border-bottom: 0; background: repeating-linear-gradient(transparent 0 33px, rgba(18, 18, 18, .32) 33px 34px); background-attachment: local; min-height: 102px; }
+.hand input:focus, .hand textarea:focus { outline: none; box-shadow: none; background-color: rgba(255, 255, 255, .22); }
+.ticks { border: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 20px; }
+.ticks legend { float: left; width: 72px; padding: 0; }
+.tick { position: relative; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 15px; font-variation-settings: 'wdth' 92; }
+.tick input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.tick__box { position: relative; width: 17px; height: 17px; border: 1.5px solid rgba(18, 18, 18, .75); border-radius: 2px; transform: rotate(-3deg); }
+.tick:nth-child(even) .tick__box { transform: rotate(2deg); }
+.tick__box::after { content: '✓'; position: absolute; left: -2px; top: -18px; font: 700 34px var(--hand); color: var(--ink-hand); opacity: 0; transform: scale(.6) rotate(-8deg); transition: opacity .15s, transform .25s var(--ease-out); }
+.tick input:checked ~ .tick__box::after { opacity: 1; transform: none; }
+.tick:hover .tick__box { background: rgba(255, 255, 255, .35); }
+.tick input:focus-visible ~ .tick__box { outline: 2px solid var(--blue); outline-offset: 3px; }
+.letter .envelope__actions { margin-top: auto; align-items: flex-end; flex-wrap: nowrap; }
+.letter__status { flex: 1; text-transform: none; font-size: 12px; text-align: center; }
+/* send = press the wax seal */
+.seal { display: grid; justify-items: center; gap: 4px; background: none; border: 0; padding: 0; cursor: pointer; color: var(--ink); }
+.seal__wax {
+  display: grid; place-items: center; width: 74px; height: 74px; border-radius: 47% 53% 50% 50% / 52% 48% 52% 48%;
+  font: 700 26px var(--hand); color: rgba(255, 220, 210, .85); text-shadow: 0 -1px 0 rgba(0, 0, 0, .35);
+  background: radial-gradient(circle at 35% 30%, #e0473a, #a6201a 58%, #7c130f);
+  box-shadow: inset 0 0 0 6px rgba(120, 15, 10, .45), inset 0 3px 4px rgba(255, 255, 255, .25), 0 3px 4px rgba(60, 0, 0, .35);
+  transition: transform .2s var(--ease-out);
+}
+.seal:hover .seal__wax { transform: rotate(-8deg) scale(1.06); }
+.seal:active .seal__wax { transform: scale(.94); }
+.seal:disabled { opacity: .6; cursor: progress; }
+.seal__label { font-size: 11px; }
+
+/* the 3D envelope matches */
+.env3d__inside { border: 1px solid rgba(110, 82, 36, .35); border-radius: 4px; background: var(--fibre), var(--grain), linear-gradient(#c8b083, #d9c497); box-shadow: 0 1px 1px rgba(0, 0, 30, .2), 0 18px 34px rgba(0, 0, 30, .32); }
+.env3d__pocket { border: 1px solid rgba(110, 82, 36, .35); border-radius: 4px; background: var(--fibre), var(--grain), linear-gradient(160deg, #ecdcb7, #e0cb9e); }
+.env3d__flap-out { background: var(--fibre), var(--grain), linear-gradient(180deg, #efe1c0, #e2cd9f); }
+.env3d__pocket path, .env3d__flap path { stroke: rgba(110, 82, 36, .6); stroke-width: 1.2; }
+.contact--stage .envelope__back.letter { padding: 96px 30px 20px; gap: 14px; }
+@media (max-width: 899px) {
+  .letter { padding: 92px 18px 18px; }
+  .letter__row { grid-template-columns: 1fr; gap: 12px; }
+  .ticks legend { float: none; width: 100%; }
+}

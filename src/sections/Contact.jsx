@@ -107,54 +107,53 @@ export default function Contact({ stage = false, flip = false }) {
           {/* front: addressed, stamped */}
           <EnvelopeFront status={status} flipped={flipped} stampRef={stamp} onFlip={() => flipTo(true)} />
 
-          {/* back: the letter */}
-          <form className="envelope__face envelope__back napkin" onSubmit={submit} aria-hidden={!flipped}>
+          {/* back: printed labels, filled in by hand */}
+          <form className="envelope__face envelope__back letter" onSubmit={submit} aria-hidden={!flipped}>
             <div className="envelope__flap" aria-hidden="true" />
-            <fieldset disabled={!flipped}>
-              <legend className="mono">What are we building?</legend>
-              <div className="chips">
-                {contact.kinds.map((k) => (
-                  <label key={k} className="chip">
-                    <input type="radio" name="kind" value={k} checked={form.kind === k} onChange={set('kind')} />
-                    <span>{k}</span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-            <label className="field">
+            <div className="letter__row">
+              <label className="hand">
+                <span className="mono">From</span>
+                <input required autoComplete="name" placeholder="your name" value={form.name} onChange={set('name')} disabled={!flipped} />
+              </label>
+              <label className="hand">
+                <span className="mono">Reply to</span>
+                <input required type="email" autoComplete="email" placeholder="you@company.com" value={form.email} onChange={set('email')} disabled={!flipped} />
+              </label>
+            </div>
+            <label className="hand hand--area">
               <span className="mono">The napkin: what should it do, and who is it for?</span>
-              <textarea required rows="5" value={form.message} onChange={set('message')} disabled={!flipped} />
+              <textarea required rows="3" value={form.message} onChange={set('message')} disabled={!flipped} />
             </label>
-            <fieldset disabled={!flipped}>
-              <legend className="mono">Rough budget</legend>
-              <div className="chips">
-                {contact.budgets.map((b) => (
-                  <label key={b} className="chip">
-                    <input type="radio" name="budget" value={b} checked={form.budget === b} onChange={set('budget')} />
-                    <span>{b}</span>
-                  </label>
-                ))}
-              </div>
+            <fieldset className="ticks" disabled={!flipped}>
+              <legend className="mono">Building</legend>
+              {contact.kinds.map((k) => (
+                <label key={k} className="tick">
+                  <input type="radio" name="kind" value={k} checked={form.kind === k} onChange={set('kind')} />
+                  <span className="tick__box" aria-hidden="true" />
+                  <span>{k}</span>
+                </label>
+              ))}
             </fieldset>
-            <div className="napkin__row">
-              <label className="field">
-                <span className="mono">Your name</span>
-                <input required autoComplete="name" value={form.name} onChange={set('name')} disabled={!flipped} />
-              </label>
-              <label className="field">
-                <span className="mono">Email</span>
-                <input required type="email" autoComplete="email" value={form.email} onChange={set('email')} disabled={!flipped} />
-              </label>
-            </div>
+            <fieldset className="ticks" disabled={!flipped}>
+              <legend className="mono">Budget</legend>
+              {contact.budgets.map((b) => (
+                <label key={b} className="tick">
+                  <input type="radio" name="budget" value={b} checked={form.budget === b} onChange={set('budget')} />
+                  <span className="tick__box" aria-hidden="true" />
+                  <span>{b}</span>
+                </label>
+              ))}
+            </fieldset>
             <div className="envelope__actions">
-              <button className="napkin__send" data-magnetic data-cursor="send" disabled={status === 'sending' || !flipped}>
-                {status === 'sending' ? 'Sealing…' : 'Seal & send →'}
-              </button>
               <button type="button" className="envelope__flip mono" onClick={() => flipTo(false)} tabIndex={flipped ? 0 : -1}>↻ Envelope</button>
+              <p className="letter__status mono" role="status">
+                {status === 'failed' && <>{contact.failure} <a href={`mailto:${profile.email}`}>{profile.email}</a></>}
+              </p>
+              <button className="seal" data-cursor="send" disabled={status === 'sending' || !flipped}>
+                <span className="seal__wax" aria-hidden="true">TS</span>
+                <span className="seal__label mono">{status === 'sending' ? 'Sealing…' : 'Seal & send'}</span>
+              </button>
             </div>
-            <p className="napkin__status mono" role="status">
-              {status === 'failed' && <>{contact.failure} <a href={`mailto:${profile.email}`}>{profile.email}</a></>}
-            </p>
           </form>
         </div>
       </div>
