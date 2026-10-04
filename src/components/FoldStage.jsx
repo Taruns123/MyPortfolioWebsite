@@ -59,14 +59,8 @@ function sizesFor(W, H) {
   return s
 }
 
-/** Which sides of the stage-n napkin are fold creases (the last two folds), as class names. */
-function creases(n) {
-  const sides = new Set()
-  for (const i of [n - 1, n - 2]) if (i >= 0) sides.add(FOLDS[i].axis === 'v' ? 'r' : 'b')
-  return sides
-}
-const MIRROR = { v: { l: 'r', r: 'l', t: 't', b: 'b' }, h: { t: 'b', b: 't', l: 'l', r: 'r' } }
-const cls = (sides) => [...sides].map((x) => `fold-${x}`).join(' ')
+const HINGE = { v: { front: 'l', back: 'r' }, h: { front: 't', back: 'b' } } // the folding edge, before each side's own flip
+const cls = (side) => `fold-${side}`
 
 const Blank = () => <div className="fold__blank" />
 const Face = ({ i, at }) => (i < FACES.length ? FACES[i].render({ still: true, at }) : <Blank />)
@@ -254,10 +248,6 @@ export default function FoldStage() {
   const [w, h] = sizes[n]
   const f = FOLDS[Math.min(n, FOLDS.length - 1)]
   const next = sizes[Math.min(n + 1, PACKET)]
-  // the flap: its hinge is a crease, plus whichever outer edges were creases already
-  const here = creases(n)
-  const flapSides = new Set([f.axis === 'v' ? 'l' : 't', ...[...here].filter((x) => x !== (f.axis === 'v' ? 'l' : 't'))])
-  const backSides = new Set([...flapSides].map((x) => MIRROR[f.axis][x]))
   const box = (i) => ({ width: sizes[i][0], height: sizes[i][1] })
   const onTimeline = (tl) => { liveTl.current = tl }
   // each fold leaves one more layer of napkin under the top face (the first few show)
@@ -267,19 +257,19 @@ export default function FoldStage() {
     <section className="fold" ref={root} aria-label="Tarun Shetty, full-stack developer">
       <div className="fold__desk" ref={desk}>
         <div className={`nap nap--${f.axis}`} ref={nap} style={{ width: w, height: h, '--stack': stack.join(' ') }}>
-          <div className={`nap__live ${cls(here)}`} ref={live} data-o={orient(sizes[n])}>
+          <div className="nap__live" ref={live} data-o={orient(sizes[n])}>
             <Fragment key={n}>{n < FACES.length ? FACES[n].render({ still: false, at: 0, onTimeline }) : <Blank />}</Fragment>
           </div>
           {n < PACKET && (
             <div className="nap__rig" ref={rig} aria-hidden="true">
               <i className="nap__keepshadow" />
-              <div className={`nap__keep ${cls(here)}`}><div className="nap__face" style={box(n)} data-o={orient(sizes[n])}><Face key={n} i={n} at={1} /></div><i className="nap__land" ref={land} /></div>
+              <div className="nap__keep"><div className="nap__face" style={box(n)} data-o={orient(sizes[n])}><Face key={n} i={n} at={1} /></div><i className="nap__land" ref={land} /></div>
               <div className="nap__flap" ref={flap}>
-                <div className={`nap__side nap__side--front ${cls(flapSides)}`}>
+                <div className={`nap__side nap__side--front ${cls(HINGE[f.axis].front)}`}>
                   <div className="nap__face nap__face--shift" style={box(n)} data-o={orient(sizes[n])}><Face key={n} i={n} at={1} /></div>
                   <i className="nap__shade" ref={shadeFront} />
                 </div>
-                <div className={`nap__side nap__side--back ${cls(backSides)}`}>
+                <div className={`nap__side nap__side--back ${cls(HINGE[f.axis].back)}`}>
                   <div className="nap__face" style={{ width: next[0], height: next[1], transform: `scale(${1 / f.zoom})` }} data-o={orient(next)}><Face key={n + 1} i={n + 1} at={0} /></div>
                   <i className="nap__shade" ref={shadeBack} />
                 </div>
@@ -291,7 +281,7 @@ export default function FoldStage() {
         {/* the open envelope the packet goes into; its front matches the contact envelope exactly */}
         <div className="env3d" ref={env3d} aria-hidden="true">
           <div className="env3d__inside" />
-          <div className={`env3d__packet ${cls(creases(PACKET))}`} ref={packet} style={box(PACKET)}><Blank /></div>
+          <div className="env3d__packet" ref={packet} style={box(PACKET)}><Blank /></div>
           <div className="env3d__pocket"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 0 L50 52 L100 0 M0 100 L38 46 M100 100 L62 46" /></svg></div>
           <div className="env3d__flap" ref={envFlap}>
             <div className="env3d__flap-out"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 0 L50 100 L100 0" /></svg></div>
