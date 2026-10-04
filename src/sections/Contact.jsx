@@ -1,7 +1,30 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { contact, profile } from '../content/site.js'
 import Typed from '../components/Typed.jsx'
 import { gsap, ScrollTrigger, prefersReducedMotion } from '../lib/motion.jsx'
+
+/** The addressed, stamped side. Also drawn by the fold stage's 3D envelope, so the two match exactly. */
+export function EnvelopeFront({ status = 'idle', flipped = false, stampRef, onFlip, decorative = false }) {
+  return (
+    <div className="envelope__face envelope__front" aria-hidden={decorative || flipped}>
+      <div className="envelope__stamp" aria-hidden="true">
+        <svg viewBox="0 0 80 96"><rect x="4" y="4" width="72" height="88" rx="2" /><path d="M20 62 q20 -34 40 0" /><circle cx="56" cy="30" r="8" /><text x="40" y="84" textAnchor="middle">₹ 30</text></svg>
+      </div>
+      <div className="envelope__postmark mono" aria-hidden="true"><span>Mumbai</span><span>2026</span></div>
+      <div className="envelope__from mono">From: <span>you</span></div>
+      <address className="envelope__to">
+        <span className="mono">To</span>
+        <strong>{profile.name}</strong>
+        <span>Full-stack developer</span>
+        <span>{profile.city}</span>
+      </address>
+      <div className={`envelope__sent mono${status === 'sent' ? ' is-on' : ''}`} ref={stampRef} aria-hidden={status !== 'sent'}>Sent ✓</div>
+      <button type="button" className="envelope__flip mono" onClick={onFlip} tabIndex={decorative || flipped ? -1 : 0}>
+        {status === 'sent' ? 'Write another ↻' : 'Flip to write ↻'}
+      </button>
+    </div>
+  )
+}
 
 const initial = { name: '', email: '', kind: '', budget: '', message: '' }
 
@@ -10,10 +33,10 @@ const initial = { name: '', email: '', kind: '', budget: '', message: '' }
  * me. It flips over (once on arrival, or with the button) to reveal the
  * letter on its back. Sending flips it back and stamps it SENT.
  */
-export default function Contact() {
+export default function Contact({ stage = false, flip = false }) {
   const [form, setForm] = useState(initial)
   const [status, setStatus] = useState('idle') // idle | sending | sent | failed
-  const [flipped, setFlipped] = useState(() => prefersReducedMotion())
+  const [flipped, setFlipped] = useState(() => !stage && prefersReducedMotion())
   const root = useRef(null)
   const card = useRef(null)
   const stamp = useRef(null)
@@ -27,6 +50,7 @@ export default function Contact() {
 
   // The envelope slides in like it's being handed over, then flips to the letter once.
   useLayoutEffect(() => {
+    if (stage) { gsap.set(card.current, { transformPerspective: 2000 }); return }
     if (prefersReducedMotion()) return
     const ctx = gsap.context(() => {
       gsap.set(card.current, { transformPerspective: 2000 })
@@ -34,7 +58,10 @@ export default function Contact() {
       ScrollTrigger.create({ trigger: '.envelope', start: 'top 35%', once: true, onEnter: () => flipTo(true) })
     }, root)
     return () => ctx.revert()
-  }, [])
+  }, [stage])
+
+  // In the fold stage, the scroll position decides which side is up.
+  useEffect(() => { if (stage) flipTo(flip) }, [stage, flip])
 
   const submit = async (e) => {
     e.preventDefault()
@@ -68,7 +95,7 @@ export default function Contact() {
   }
 
   return (
-    <section className="contact" id="contact" ref={root}>
+    <section className={`contact${stage ? ' contact--stage' : ''}`} id="contact" ref={root}>
       <header className="contact__head">
         <Typed text={contact.command} className="mono contact__cmd" />
         <h2>{contact.title}</h2>
@@ -78,23 +105,7 @@ export default function Contact() {
       <div className="envelope">
         <div className={`envelope__card${flipped ? ' is-flipped' : ''}`} ref={card}>
           {/* front: addressed, stamped */}
-          <div className="envelope__face envelope__front" aria-hidden={flipped}>
-            <div className="envelope__stamp" aria-hidden="true">
-              <svg viewBox="0 0 80 96"><rect x="4" y="4" width="72" height="88" rx="2" /><path d="M20 62 q20 -34 40 0" /><circle cx="56" cy="30" r="8" /><text x="40" y="84" textAnchor="middle">₹ 30</text></svg>
-            </div>
-            <div className="envelope__postmark mono" aria-hidden="true"><span>Mumbai</span><span>2026</span></div>
-            <div className="envelope__from mono">From: <span>you</span></div>
-            <address className="envelope__to">
-              <span className="mono">To</span>
-              <strong>{profile.name}</strong>
-              <span>Full-stack developer</span>
-              <span>{profile.city}</span>
-            </address>
-            <div className={`envelope__sent mono${status === 'sent' ? ' is-on' : ''}`} ref={stamp} aria-hidden={status !== 'sent'}>Sent ✓</div>
-            <button type="button" className="envelope__flip mono" onClick={() => flipTo(true)} tabIndex={flipped ? -1 : 0}>
-              {status === 'sent' ? 'Write another ↻' : 'Flip to write ↻'}
-            </button>
-          </div>
+          <EnvelopeFront status={status} flipped={flipped} stampRef={stamp} onFlip={() => flipTo(true)} />
 
           {/* back: the letter */}
           <form className="envelope__face envelope__back napkin" onSubmit={submit} aria-hidden={!flipped}>

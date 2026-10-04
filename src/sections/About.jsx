@@ -3,10 +3,10 @@ import { about } from '../content/site.js'
 import { makeRough } from '../lib/sketch.js'
 import { rich } from '../lib/rich.jsx'
 
-export default function About() {
+export default function About({ still = false }) {
   const frame = useMemo(() => makeRough(23).rect(8, 8, 384, 464, 6), [])
   return (
-    <section className="about dogear dogear--tr fold-away" id="about">
+    <section className="about dogear dogear--tr" id={still ? undefined : 'about'}>
       <figure className="about__photo">
         {about.photo
           ? <img src={about.photo} alt="Tarun Shetty" width="400" height="480" loading="lazy" />

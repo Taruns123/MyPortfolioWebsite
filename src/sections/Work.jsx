@@ -5,12 +5,12 @@ import { gsap } from '../lib/motion.jsx'
 import Scribble from '../components/Scribble.jsx'
 
 /** Index of real work. On desktop a screenshot follows the cursor over each row. */
-export default function Work() {
+export default function Work({ still = false }) {
   const peek = useRef(null)
   const [img, setImg] = useState(null)
 
   useEffect(() => {
-    if (!window.matchMedia('(pointer: fine)').matches) return
+    if (still || !window.matchMedia('(pointer: fine)').matches) return
     const xTo = gsap.quickTo(peek.current, 'x', { duration: 0.45, ease: 'power3' })
     const yTo = gsap.quickTo(peek.current, 'y', { duration: 0.45, ease: 'power3' })
     const rTo = gsap.quickTo(peek.current, 'rotation', { duration: 0.6, ease: 'power3' })
@@ -23,10 +23,10 @@ export default function Work() {
     }
     addEventListener('pointermove', move)
     return () => removeEventListener('pointermove', move)
-  }, [])
+  }, [still])
 
   return (
-    <section className="work dogear dogear--br fold-away" id="work">
+    <section className="work dogear dogear--br" id={still ? undefined : 'work'}>
       <header className="section-head">
         <span className="mono">Real work</span>
         <h2>Things I have actually shipped. <em>Two new case studies are in progress.</em></h2>

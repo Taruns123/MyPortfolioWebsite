@@ -6,7 +6,7 @@ import { rich } from '../lib/rich.jsx'
 
 const XS = [150, 450, 750, 1050]
 
-export default function Process() {
+export default function Process({ still = false }) {
   const root = useRef(null)
   const { line, dots } = useMemo(() => {
     const r = makeRough(41)
@@ -16,7 +16,7 @@ export default function Process() {
   }, [])
 
   useLayoutEffect(() => {
-    if (prefersReducedMotion()) return
+    if (still || prefersReducedMotion()) return
     const ctx = gsap.context(() => {
       const paths = gsap.utils.toArray('.process__line path')
       paths.forEach((p) => { const L = p.getTotalLength(); gsap.set(p, { strokeDasharray: L, strokeDashoffset: L }) })
@@ -43,10 +43,10 @@ export default function Process() {
       }
     }, root)
     return () => ctx.revert()
-  }, [])
+  }, [still])
 
   return (
-    <section className="process dogear dogear--bl fold-away" id="process" ref={root}>
+    <section className="process dogear dogear--bl" id={still ? undefined : 'process'} ref={root}>
       <header className="section-head">
         <span className="mono">How I work</span>
         <h2>{process.title}</h2>

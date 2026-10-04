@@ -21,6 +21,7 @@ export function TransitionProvider({ children }) {
     const [path, hash] = to.split('#')
     const target = path || '/'
     if (target === location.pathname) {
+      if (hash && window.__foldGoTo?.(`#${hash}`)) return // the napkin decides where #hash lives
       if (hash) scroll.scrollTo(`#${hash}`)
       else scroll.scrollTo(0)
       return
@@ -30,7 +31,7 @@ export function TransitionProvider({ children }) {
       navigate(target)
       // wait a frame for the new page to mount before scrolling
       requestAnimationFrame(() => {
-        if (hash) scroll.scrollTo(`#${hash}`, { immediate: true })
+        if (hash) { if (!window.__foldGoTo?.(`#${hash}`)) scroll.scrollTo(`#${hash}`, { immediate: true }) }
         else scroll.scrollTo(0, { immediate: true })
       })
     }

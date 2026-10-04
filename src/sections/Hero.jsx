@@ -5,12 +5,12 @@ import Typed from '../components/Typed.jsx'
 import NapkinPad from '../components/NapkinPad.jsx'
 import { Go } from '../components/Transition.jsx'
 
-export default function Hero() {
+export default function Hero({ still = false }) {
   const root = useRef(null)
   const [l1, l2, accent] = hero.lines
 
   useLayoutEffect(() => {
-    if (prefersReducedMotion()) return
+    if (still || prefersReducedMotion()) return
     const ctx = gsap.context(() => {
       const scrib = root.current.querySelector('.scribble path')
       const L = scrib.getTotalLength()
@@ -23,10 +23,10 @@ export default function Hero() {
         .from('.hero__sub', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.9')
     }, root)
     return () => ctx.revert()
-  }, [])
+  }, [still])
 
   return (
-    <section className="hero dogear dogear--tr fold-away" ref={root}>
+    <section className="hero dogear dogear--tr" ref={root}>
       <p className="hero__intro">
         <mark>{hero.intro.name}</mark> — {hero.intro.line}
       </p>
@@ -43,7 +43,7 @@ export default function Hero() {
       </h1>
       <div className="hero__pad">
         <span className="mono hero__cue" aria-hidden="true">{hero.cue}</span>
-        <NapkinPad />
+        <NapkinPad still={still} />
       </div>
       <div className="hero__sub">
         <p className="hero__lede">{hero.sub}</p>

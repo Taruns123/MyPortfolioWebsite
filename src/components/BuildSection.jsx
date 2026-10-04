@@ -17,9 +17,15 @@ const fmt = (el, p) => {
   }
 }
 
-export default function BuildSection({ build }) {
+/**
+ * mode: 'scroll' — pinned, scroll draws it (normal page)
+ *       'play'   — inside the fold stage; plays once whenever `active` turns on
+ *       'still'  — a static copy for fold layers: the finished UI, no motion
+ */
+export default function BuildSection({ build, mode = 'scroll', active = false }) {
   const { Ship, sketch, wire } = boards[build.key]
   const root = useRef(null)
+  const tlRef = useRef(null)
   const paths = useMemo(() => sketch(makeRough(seedOf(build.key))), [sketch, build.key])
 
   useLayoutEffect(() => {
@@ -34,7 +40,7 @@ export default function BuildSection({ build }) {
       const setCount = (p) => counters.forEach((c) => { c.textContent = fmt(c, p) })
       const prep = (p) => { const L = p.getTotalLength(); gsap.set(p, { strokeDasharray: L, strokeDashoffset: L }) }
 
-      if (prefersReducedMotion()) {
+      if (mode === 'still' || prefersReducedMotion()) {
         gsap.set(q('.sketch-layer'), { opacity: 0 })
         gsap.set(q('.ship-layer'), { opacity: 1 })
         setCount(1); setStage(2)
@@ -70,6 +76,8 @@ export default function BuildSection({ build }) {
         setStage(p < tWire ? 0 : p < tShip ? 1 : 2)
       })
 
+      if (mode === 'play') { tlRef.current = tl.duration(2.4); return }
+
       const mm = gsap.matchMedia()
       // Desktop: pin and let the scroll draw it.
       mm.add('(min-width: 900px)', () => {
@@ -80,18 +88,23 @@ export default function BuildSection({ build }) {
         ScrollTrigger.create({ trigger: q('.board')[0], start: 'top 75%', once: true, onEnter: () => tl.duration(2.6).play() })
       })
     }, root)
-    return () => ctx.revert()
-  }, [])
+    return () => { tlRef.current = null; ctx.revert() }
+  }, [mode])
+
+  // In the fold stage: draw it again each time this face is revealed.
+  useLayoutEffect(() => {
+    if (mode === 'play' && active && tlRef.current) tlRef.current.restart()
+  }, [mode, active])
 
   const { proof } = build
   return (
-    <section className="build" ref={root} aria-labelledby={`build-${build.key}`}>
+    <section className="build" ref={root} aria-labelledby={mode === 'still' ? undefined : `build-${build.key}`}>
       <aside className="build__aside">
         <div className="build__head">
           <span className="build__num">{build.n}</span>
           <Typed text={build.command} className="mono build__cmd" />
         </div>
-        <h3 className="build__title" id={`build-${build.key}`}>{build.title}</h3>
+        <h3 className="build__title" id={mode === 'still' ? undefined : `build-${build.key}`}>{build.title}</h3>
         <ol className="stages mono">
           {STAGES.map((s, i) => (
             <li key={s} className={`stage${i === 2 ? ' stage--ship' : ''}`}><span>{s}</span><span>{build.stages[i]}</span></li>

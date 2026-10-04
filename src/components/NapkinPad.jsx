@@ -126,7 +126,7 @@ function WireShape({ s }) {
 }
 
 /* ---------------------------------------------------------------- the pad */
-export default function NapkinPad() {
+export default function NapkinPad({ still = false }) {
   const svg = useRef(null)
   const live = useRef(null)
   const current = useRef(null)
@@ -206,6 +206,7 @@ export default function NapkinPad() {
     }
     let si = 0, pi = 2
     const step = () => {
+      if (!live.current) return // unmounted mid-demo
       const pts = all[si]
       pi += 3
       live.current.setAttribute('d', smoothPath(pts.slice(0, pi)))
@@ -227,6 +228,7 @@ export default function NapkinPad() {
 
   // Nobody touched the napkin after a few seconds in view? Draw one.
   useEffect(() => {
+    if (still) return
     const io = new IntersectionObserver(([e]) => {
       if (e.isIntersecting && !touched.current) {
         demoTimer.current = setTimeout(() => { if (!touched.current) drawForMe() }, 2600)
@@ -235,7 +237,7 @@ export default function NapkinPad() {
     }, { threshold: 0.6 })
     io.observe(svg.current)
     return () => { io.disconnect(); stopDemo() }
-  }, [drawForMe])
+  }, [drawForMe, still])
 
   /* -- stage animations -- */
   useLayoutEffect(() => {

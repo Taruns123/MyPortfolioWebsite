@@ -277,31 +277,6 @@ a.work__row:hover { background: var(--ink); color: var(--paper); padding-left: c
 .envelope__flap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #efe3c6, #e2d0a6); clip-path: polygon(0.4% 0, 99.6% 0, 50% calc(100% - 3px)); }
 .envelope__actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 
-/* sections folding closed as you scroll past: the bottom of the napkin is
-   folded up over the content, crease first */
-.fold-away { position: relative; }
-.fold-away::before {
-  content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: var(--fold, 0);
-  background: linear-gradient(to top, rgba(40, 32, 18, .28), rgba(40, 32, 18, 0) 70%);
-}
-.fold-flap {
-  position: absolute; left: -5%; right: -5%; bottom: 0; height: 0; z-index: 4; pointer-events: none;
-  transform-origin: 50% 100%; /* wider than the section so the perspective lift never exposes its sides */
-  background: var(--grain), var(--emboss), #f3eee2;
-  /* shadow cast upward by the lifting edge onto the content still showing */
-  box-shadow: 0 calc(-14px - 22px * var(--edge, 0)) calc(18px + 26px * var(--edge, 0)) calc(-10px) rgba(40, 32, 18, calc(.18 + .22 * var(--edge, 0)));
-}
-/* the free top edge: a thin bright lip with a darker underside while it's lifted */
-.fold-flap::before {
-  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 14px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, .85), rgba(255, 255, 255, 0) 30%, rgba(60, 48, 26, calc(.06 + .16 * var(--edge, 0))) 100%);
-}
-/* the crease: the sheet bending back on itself, a rounded doubled edge */
-.fold-flap::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 22px;
-  background: linear-gradient(to top, rgba(118, 106, 82, .28), rgba(255, 255, 255, .9) 35%, rgba(255, 255, 255, .25) 65%, rgba(118, 106, 82, .12));
-}
-
 @media (prefers-reduced-motion: reduce) {
   .envelope__back.napkin { transform: none; }
   .envelope__card.is-flipped .envelope__front { display: none; }
@@ -542,3 +517,126 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 .dogear--br::after { bottom: 0; right: 0; --fold-dir: 315deg; --fold-shadow: -3px -4px 4px; }
 .hero.dogear--tr::after { top: var(--rail-h); }
 @media (max-width: 899px) { .dogear::after { width: 40px; height: 40px; } }
+
+/* ==========================================================================
+   Fold stage: the homepage as one napkin on a desk, folded in half per step
+   ========================================================================== */
+.fold-home { --desk: #2431c9; }
+.fold { position: relative; height: 100vh; }
+.fold__desk { position: absolute; inset: 0; overflow: hidden; background: var(--grain), radial-gradient(ellipse at 50% 45%, #3442ff, var(--desk) 75%); }
+.fold-home .hl { background-size: 100% 62%; }
+
+/* the napkin; --stack is one paper edge per fold already made */
+.nap {
+  position: absolute; left: 50%; top: calc(50% + var(--rail-h) / 2); z-index: 2; will-change: transform;
+  background: var(--grain), var(--emboss), var(--paper);
+  box-shadow: var(--stack,) 14px 14px 0 var(--ink), 0 40px 80px rgba(0, 0, 20, .35);
+}
+.nap.is-folding { background: none; box-shadow: none; }
+.nap__live, .nap__rig, .nap__keep { position: absolute; inset: 0; }
+.nap__live > *, .nap__face > * { width: 100%; height: 100%; }
+.nap__rig { visibility: hidden; perspective: 2600px; pointer-events: none; }
+.nap__face { position: absolute; left: 0; top: 0; overflow: hidden; transform-origin: 0 0; }
+.nap--v .nap__keep { clip-path: inset(0 50% 0 0); }
+.nap--h .nap__keep { clip-path: inset(0 0 50% 0); }
+.nap__keepshadow { position: absolute; left: 0; top: 0; width: 100%; height: 100%; box-shadow: var(--stack,) 14px 14px 0 var(--ink), 0 30px 70px rgba(0, 0, 20, .3); }
+.nap--v .nap__keepshadow { width: 50%; }
+.nap--h .nap__keepshadow { height: 50%; }
+.nap__flap { position: absolute; z-index: 2; transform-style: preserve-3d; }
+.nap--v .nap__flap { left: 50%; top: 0; width: 50%; height: 100%; transform-origin: 0 50%; }
+.nap--h .nap__flap { left: 0; top: 50%; width: 100%; height: 50%; transform-origin: 50% 0; }
+.nap__side { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.nap--v .nap__side--back { transform: rotateY(180deg); }
+.nap--h .nap__side--back { transform: rotateX(180deg); }
+.nap--v .nap__face--shift { left: -100%; }
+.nap--h .nap__face--shift { top: -100%; }
+.nap__shade, .nap__land { position: absolute; z-index: 5; pointer-events: none; opacity: 0; }
+.nap__shade { inset: 0; }
+.nap--v .nap__side--front .nap__shade { background: linear-gradient(to left, rgba(30, 24, 12, .6), rgba(30, 24, 12, .12)); }
+.nap--v .nap__side--back .nap__shade { background: linear-gradient(to right, rgba(30, 24, 12, .6), rgba(30, 24, 12, .12)); }
+.nap--h .nap__side--front .nap__shade { background: linear-gradient(to bottom, rgba(30, 24, 12, .6), rgba(30, 24, 12, .12)); }
+.nap--h .nap__side--back .nap__shade { background: linear-gradient(to top, rgba(30, 24, 12, .6), rgba(30, 24, 12, .12)); }
+.nap--v .nap__land { left: 0; top: 0; width: 50%; height: 100%; background: linear-gradient(to left, rgba(30, 24, 12, .55), rgba(30, 24, 12, .04)); }
+.nap--h .nap__land { left: 0; top: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(30, 24, 12, .55), rgba(30, 24, 12, .04)); }
+
+/* every face fills its panel exactly */
+.nap section, .builds-face, .face-pw, .fold__blank { position: relative; height: 100%; min-height: 0; overflow: hidden; border-top: 0; background: var(--grain), var(--emboss), var(--paper); }
+
+.nap .dogear::before, .nap .dogear::after { display: none; }
+
+/* face 1: the hero, full napkin */
+.nap .hero { padding: 26px 32px 24px; row-gap: 14px; }
+.nap .hero__title { font-size: clamp(40px, 6.2vw, 112px); }
+.nap .hero__pad { width: min(100%, 48vh, 500px); }
+.nap .napkin-pad__bar { margin-top: 14px; min-height: 0; }
+
+/* face 2: the builds, a tall half */
+.builds-face { display: grid; grid-template-rows: auto 1fr; }
+.builds-face__tabs { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: var(--rule); }
+.builds-face__tabs button { font: inherit; font-size: 11.5px; text-transform: uppercase; text-align: left; line-height: 1.25; padding: 11px 12px; border: 0; border-right: var(--rule); background: transparent; color: var(--ink); cursor: pointer; transition: background .2s, color .2s; }
+.builds-face__tabs button:last-child { border-right: 0; }
+.builds-face__tabs button span { color: var(--blue); font-weight: 600; }
+.builds-face__tabs button:hover { background: var(--marker); }
+.builds-face__tabs button.is-on { background: var(--ink); color: var(--paper); }
+.builds-face__tabs button.is-on span { color: var(--marker); }
+.builds-face .build { height: 100%; min-height: 0; grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); background: none; }
+.builds-face .build__aside { border-right: 0; border-bottom: var(--rule); padding: 18px 24px 16px; gap: 10px; }
+.builds-face .build__num { font-size: clamp(40px, 4.4vw, 64px); }
+.builds-face .build__title { font-size: clamp(20px, 2vw, 28px); }
+.builds-face .stages { display: grid; grid-template-columns: repeat(3, 1fr); }
+.builds-face .stage { border-bottom: 0; border-right: var(--rule); padding: 7px 10px; font-size: 11px; }
+.builds-face .stage:last-child { border-right: 0; }
+.builds-face .build__body { font-size: 14.5px; max-width: none; }
+.builds-face .proof { display: none; }
+.builds-face .build__canvas { padding: 14px 20px; min-height: 0; }
+.builds-face .board { height: 100%; }
+
+/* face 3: process + work, full napkin again */
+.face-pw { display: grid; grid-template-rows: auto auto; align-content: start; }
+.face-pw section { height: auto; background: none; }
+.face-pw .process { padding-bottom: 14px; }
+.face-pw .process__line, .face-pw .facts, .face-pw .section-head h2 em { display: none; }
+.face-pw .section-head { padding: 22px 32px 12px; gap: 6px; }
+.face-pw .section-head h2 { font-size: clamp(24px, 2.6vw, 42px); max-width: none; }
+.face-pw .steps { padding: 0 32px; }
+.face-pw .step { padding: 12px 14px 14px; gap: 8px; }
+.face-pw .step h3 { font-size: clamp(16px, 1.5vw, 22px); }
+.face-pw .step p { font-size: 13.5px; line-height: 1.4; }
+.face-pw .work__row { padding: 10px 32px; }
+.face-pw .work__title { font-size: clamp(18px, 2vw, 30px); }
+.face-pw .work__summary { font-size: 14px; }
+
+/* face 4: about, a tall half */
+.nap .about { grid-template-columns: minmax(0, 1fr); padding: 24px 28px; gap: 14px; align-content: start; }
+.nap .about__photo { width: min(200px, 28vh); position: absolute; bottom: 24px; right: 28px; }
+.nap .about__placeholder span { font-size: 64px; }
+.nap .about__text { gap: 10px; max-width: none; }
+.nap .about__text h2 { font-size: clamp(26px, 2.8vw, 42px); }
+.nap .about__text p { font-size: 14px; line-height: 1.45; }
+.nap .about__facts dd { font-size: 12.5px; }
+.nap .about__facts > div { padding: 8px 12px; }
+
+/* the open envelope the packet slides into */
+.env3d { position: absolute; z-index: 3; visibility: hidden; transform-style: preserve-3d; }
+.env3d > * { position: absolute; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.env3d__pocket svg, .env3d__flap svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.env3d__pocket path, .env3d__flap path { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.env3d__inside { inset: 0; border: var(--rule); background: var(--grain), linear-gradient(#c9b282, #dbc699); box-shadow: 12px 12px 0 var(--ink); }
+.env3d__packet { left: 0; top: 0; transform-origin: 50% 50%; box-shadow: 0 12px 30px rgba(30, 24, 12, .25); outline: 1px solid rgba(18, 18, 18, .15); }
+.env3d__pocket { inset: 0; transform: translateZ(2px); clip-path: polygon(0 0, 50% 52%, 100% 0, 100% 100%, 0 100%); background: var(--grain), linear-gradient(160deg, #f1e4c6, #e8d7b2); border: var(--rule); }
+.env3d__flap { left: 0; right: 0; top: 0; height: 56%; transform-origin: 50% 0; transform-style: preserve-3d; backface-visibility: visible; -webkit-backface-visibility: visible; }
+.env3d__flap > div { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.env3d__flap-out { clip-path: polygon(0 0, 100% 0, 50% 100%); background: var(--grain), linear-gradient(180deg, #efe3c6, #e2d0a6); }
+.env3d__flap-in { clip-path: polygon(0 100%, 100% 100%, 50% 0); transform: rotateX(180deg); background: repeating-linear-gradient(45deg, var(--blue) 0 7px, #1f2bd6 7px 14px); }
+.env3d__front { inset: 0; display: grid; transform: rotateY(180deg) translateZ(1px); }
+.env3d__front .envelope__face { min-height: 0; }
+
+/* the finale: the envelope itself, which flips to the letter */
+.fold__envelope { position: absolute; inset: var(--rail-h) 0 0 0; z-index: 4; display: grid; place-items: center; visibility: hidden; }
+.contact--stage { border-top: 0; padding: 0; gap: 14px; }
+.contact--stage .contact__head { display: none; }
+.contact--stage .contact__direct, .contact--stage .contact__direct a { color: var(--paper); }
+.contact--stage .envelope { width: min(860px, 80vw); }
+.contact--stage .envelope__front { min-height: 0; }
+.contact--stage .envelope__back.napkin { padding: 96px 28px 20px; gap: 14px; }
+.contact--stage .field textarea { min-height: 90px; }
