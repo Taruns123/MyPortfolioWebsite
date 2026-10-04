@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { ScrollProvider, ScrollTrigger } from './lib/motion.jsx'
 import { TransitionProvider } from './components/Transition.jsx'
@@ -7,8 +7,8 @@ import InkTrail from './components/InkTrail.jsx'
 import Cursor from './components/Cursor.jsx'
 import Footer from './sections/Footer.jsx'
 import Home from './pages/Home.jsx'
-import CaseStudy from './pages/CaseStudy.jsx'
-import NotFound from './pages/NotFound.jsx'
+const CaseStudy = lazy(() => import('./pages/CaseStudy.jsx'))
+const NotFound = lazy(() => import('./pages/NotFound.jsx'))
 
 function RefreshOnRoute() {
   const { pathname } = useLocation()
@@ -30,11 +30,13 @@ export default function App() {
         <Cursor />
         <RefreshOnRoute />
         <div id="main">
+          <Suspense fallback={<div style={{ minHeight: '100vh' }} />}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/work/:slug" element={<CaseStudy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
         </div>
         <Footer />
       </TransitionProvider>

@@ -52,7 +52,7 @@ export default function Footer() {
           {profile.socials.filter((s) => s.href).map((s) => <a key={s.name} href={s.href} target="_blank" rel="noreferrer">{s.name} ↗</a>)}
         </span>
       </div>
-      <div className="footer__mark" ref={mark} aria-label={MARK}>
+      <div className="footer__mark" ref={mark} role="img" aria-label={MARK}>
         {[...MARK].map((ch, i) => <span key={i} aria-hidden="true">{ch === ' ' ? ' ' : ch}</span>)}
       </div>
       <div className="footer__row mono">

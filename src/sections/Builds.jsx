@@ -26,7 +26,8 @@ export function Ticker() {
   }, [])
 
   return (
-    <div className="ticker mono" aria-label={ticker.join(', ')}>
+    <div className="ticker mono">
+      <p className="sr-only">{ticker.join('. ')}</p>
       <div className="ticker__track" ref={track} aria-hidden="true">
         {items.map((t, i) => <span key={i}>{t} <b>✶</b></span>)}
       </div>

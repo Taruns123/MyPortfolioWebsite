@@ -34,7 +34,8 @@ export default function Typed({ text, prompt = '$', onMount = false, delay = 0, 
   }, [text, onMount, delay, speed])
 
   return (
-    <span ref={ref} className={`typed ${className}`} aria-label={`${prompt ? prompt + ' ' : ''}${text}`}>
+    <span ref={ref} className={`typed ${className}`}>
+      <span className="sr-only">{text}</span>
       <span aria-hidden="true">
         {prompt && <span className="typed__prompt">{prompt} </span>}
         {shown}
