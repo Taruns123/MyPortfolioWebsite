@@ -16,7 +16,7 @@
   --ease-out: cubic-bezier(.16, 1, .3, 1);
   /* paper grain: fine fibres + slightly uneven tone, tiled */
   --emboss: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cg%3E%3Ccircle cx='5.4' cy='5.4' r='1.6' fill='%23fff' fill-opacity='.38'/%3E%3Ccircle cx='6.2' cy='6.2' r='1.6' fill='%23766a52' fill-opacity='.08'/%3E%3Ccircle cx='5.8' cy='5.8' r='1.3' fill='%23ece6d8'/%3E%3Ccircle cx='16.4' cy='16.4' r='1.6' fill='%23fff' fill-opacity='.38'/%3E%3Ccircle cx='17.2' cy='17.2' r='1.6' fill='%23766a52' fill-opacity='.08'/%3E%3Ccircle cx='16.8' cy='16.8' r='1.3' fill='%23ece6d8'/%3E%3C/g%3E%3C/svg%3E");
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .31 0 0 0 0 .22 0 0 0 0.2 0'/%3E%3C/filter%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .48 0 0 0 0 .36 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)'/%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .31 0 0 0 0 .22 0 0 0 0.2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 *, *::before, *::after { box-sizing: border-box; }
