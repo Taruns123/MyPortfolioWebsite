@@ -26,7 +26,7 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="hero dogear dogear--tr" ref={root}>
+    <section className="hero dogear dogear--tr fold-away" ref={root}>
       <p className="hero__intro">
         <mark>{hero.intro.name}</mark> — {hero.intro.line}
       </p>

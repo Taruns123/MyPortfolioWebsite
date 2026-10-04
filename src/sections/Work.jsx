@@ -26,7 +26,7 @@ export default function Work() {
   }, [])
 
   return (
-    <section className="work dogear dogear--br" id="work">
+    <section className="work dogear dogear--br fold-away" id="work">
       <header className="section-head">
         <span className="mono">Real work</span>
         <h2>Things I have actually shipped. <em>Two new case studies are in progress.</em></h2>

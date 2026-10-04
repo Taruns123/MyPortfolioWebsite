@@ -16,7 +16,7 @@ export function useHomeMotion() {
 
     const splits = []
     const ctx = gsap.context(() => {
-      gsap.utils.toArray('.section-head h2, .about__text h2, .contact__intro h2').forEach((h) => {
+      gsap.utils.toArray('.section-head h2, .about__text h2, .contact__head h2').forEach((h) => {
         const split = SplitText.create(h, { type: 'words', mask: 'words' })
         splits.push(split)
         gsap.from(split.words, {

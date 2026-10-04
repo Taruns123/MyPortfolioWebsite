@@ -46,7 +46,7 @@ export default function Process() {
   }, [])
 
   return (
-    <section className="process dogear dogear--bl" id="process" ref={root}>
+    <section className="process dogear dogear--bl fold-away" id="process" ref={root}>
       <header className="section-head">
         <span className="mono">How I work</span>
         <h2>{process.title}</h2>

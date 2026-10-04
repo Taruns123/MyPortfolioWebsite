@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useScroll } from '../lib/motion.jsx'
 import { useHomeMotion } from '../lib/useHomeMotion.js'
+import { useFolds } from '../lib/useFolds.js'
 import Hero from '../sections/Hero.jsx'
 import Builds, { Ticker } from '../sections/Builds.jsx'
 import Process from '../sections/Process.jsx'
@@ -13,6 +14,7 @@ export default function Home() {
   const { hash } = useLocation()
   const scroll = useScroll()
   useHomeMotion()
+  useFolds()
   useEffect(() => { document.title = 'Tarun Shetty — You bring the napkin. I bring it back working.' }, [])
   // Deep links like tarunshetty.dev/#contact (handy in proposals): wait for
   // pins to measure, then jump.

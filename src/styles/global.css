@@ -240,14 +240,51 @@ a.work__row:hover { background: var(--ink); color: var(--paper); padding-left: c
 /* ==========================================================================
    Contact (the napkin form)
    ========================================================================== */
-.contact { display: grid; grid-template-columns: 1fr 1.25fr; border-top: var(--rule); }
-.contact__intro { padding: 64px var(--gutter); border-right: var(--rule); display: flex; flex-direction: column; gap: 18px; background: var(--blue); color: var(--paper); }
-.contact__intro .typed__prompt { color: var(--marker); }
-.contact__intro .typed__caret { background: var(--marker); }
+.contact { border-top: var(--rule); padding: 72px var(--gutter) 72px; display: grid; gap: 36px; justify-items: center; }
+.contact__head { justify-self: stretch; display: grid; gap: 14px; }
 .contact__cmd { text-transform: none; font-size: 15px; }
-.contact__intro h2 { font-weight: 900; font-variation-settings: 'wdth' 125; text-transform: uppercase; font-size: clamp(44px, 6vw, 104px); line-height: .86; letter-spacing: -.035em; }
-.contact__intro p { font-size: 19px; max-width: 34ch; }
-.contact__direct { text-transform: none; margin-top: auto; }
+.contact__head h2 { font-weight: 900; font-variation-settings: 'wdth' 125; text-transform: uppercase; font-size: clamp(44px, 7vw, 120px); line-height: .86; letter-spacing: -.035em; }
+.contact__head p { font-size: 19px; max-width: 44ch; }
+.contact__direct { text-transform: none; }
+
+/* the envelope: front addressed to me, letter on the back */
+.envelope { width: min(100%, 980px); }
+.envelope__card { display: grid; transform-style: preserve-3d; }
+.envelope__face { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: var(--rule); box-shadow: 12px 12px 0 var(--ink); position: relative; }
+.envelope__front {
+  min-height: 460px; padding: 32px; display: grid; grid-template-rows: auto 1fr auto; align-items: start;
+  background: var(--grain), linear-gradient(160deg, #f1e4c6, #e8d7b2);
+}
+.envelope__from { text-transform: none; font-size: 14px; }
+.envelope__from span { border-bottom: 1.5px dashed var(--ink); padding: 0 40px 2px 4px; }
+.envelope__stamp { position: absolute; top: 24px; right: 28px; width: 82px; transform: rotate(4deg); }
+.envelope__stamp svg { width: 100%; height: auto; overflow: visible; }
+.envelope__stamp rect { fill: var(--marker); stroke: var(--ink); stroke-width: 3; stroke-dasharray: 4 3; }
+.envelope__stamp path { fill: none; stroke: var(--blue); stroke-width: 6; stroke-linecap: round; }
+.envelope__stamp circle { fill: var(--blue); }
+.envelope__stamp text { font: 800 13px var(--mono); fill: var(--ink); }
+.envelope__postmark { position: absolute; top: 46px; right: 82px; width: 92px; height: 92px; border: 2.5px solid rgba(44, 59, 255, .55); border-radius: 50%; display: grid; place-content: center; text-align: center; color: rgba(44, 59, 255, .7); transform: rotate(-14deg); font-size: 11px; line-height: 1.5; }
+.envelope__to { grid-row: 2; align-self: center; justify-self: center; font-style: normal; display: grid; gap: 4px; min-width: min(100%, 360px); }
+.envelope__to .mono { color: var(--muted); }
+.envelope__to strong { font-weight: 900; font-variation-settings: 'wdth' 120; text-transform: uppercase; font-size: clamp(28px, 4vw, 52px); line-height: 1; letter-spacing: -.02em; border-bottom: 2px solid var(--ink); padding-bottom: 6px; }
+.envelope__to span:not(.mono) { font-size: 18px; border-bottom: 1.5px solid rgba(18, 18, 18, .35); padding: 4px 0; }
+.envelope__flip { justify-self: end; grid-row: 3; text-transform: none; font-size: 13px; padding: 9px 14px; border: var(--rule); background: var(--paper); cursor: pointer; transition: transform .15s, box-shadow .15s; }
+.envelope__flip:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+.envelope__sent { position: absolute; left: 50%; top: 50%; translate: -50% -50%; padding: 14px 22px; border: 4px double #c0392b; color: #c0392b; font-size: 28px; font-weight: 600; letter-spacing: .12em; transform: rotate(-12deg); opacity: 0; pointer-events: none; }
+.envelope__sent.is-on { opacity: 1; }
+.envelope__back.napkin { transform: rotateY(180deg); padding: 120px 32px 32px; background: repeating-linear-gradient(0deg, transparent 0 31px, rgba(44, 59, 255, .08) 31px 32px), var(--grain), #fbf8f0; }
+.envelope__flap { position: absolute; top: 0; left: 0; right: 0; height: 96px; background: var(--ink); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.envelope__flap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #efe3c6, #e2d0a6); clip-path: polygon(0.4% 0, 99.6% 0, 50% calc(100% - 3px)); }
+.envelope__actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* sections folding away as you scroll past them */
+.fold-away::before { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(to top, rgba(40, 32, 18, .05), rgba(40, 32, 18, .5)); opacity: var(--fold, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .envelope__back.napkin { transform: none; }
+  .envelope__card.is-flipped .envelope__front { display: none; }
+  .envelope__card:not(.is-flipped) .envelope__back { display: none; }
+}
 .napkin { padding: 40px var(--gutter); display: flex; flex-direction: column; gap: 24px; background: repeating-linear-gradient(0deg, transparent 0 31px, rgba(18, 18, 18, .07) 31px 32px); }
 .napkin fieldset { border: 0; padding: 0; display: grid; gap: 10px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -373,8 +410,13 @@ a.work__row:hover { background: var(--ink); color: var(--paper); padding-left: c
   .work__peek { display: none; }
   .about { grid-template-columns: 1fr; gap: 28px; padding-top: 56px; }
   .about__photo { max-width: 340px; }
-  .contact { grid-template-columns: 1fr; }
-  .contact__intro { border-right: 0; border-bottom: var(--rule); padding-top: 48px; }
+  .contact { padding-top: 56px; }
+  .envelope__front { min-height: 340px; padding: 20px; }
+  .envelope__stamp { width: 58px; top: 16px; right: 16px; }
+  .envelope__postmark { width: 70px; height: 70px; right: 52px; top: 30px; font-size: 9px; }
+  .envelope__face { box-shadow: 6px 6px 0 var(--ink); }
+  .envelope__back.napkin { padding: 84px 16px 20px; }
+  .envelope__flap { height: 64px; }
   .cs__overview { grid-template-columns: 1fr; gap: 16px; }
   .features ol { grid-template-columns: 1fr; }
   .feature { border-right: 0 !important; border-bottom: var(--rule) !important; }
