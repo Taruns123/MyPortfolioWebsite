@@ -19,13 +19,14 @@ const fmt = (el, p) => {
 
 /**
  * mode: 'scroll' — pinned, scroll draws it (normal page)
- *       'play'   — inside the fold stage; plays once whenever `active` turns on
- *       'still'  — a static copy for fold layers: the finished UI, no motion
+ *       'scrub'  — inside the fold stage; the stage drives the timeline through
+ *                  `onTimeline(tl)`, starting at progress `at`
+ *       'still'  — a static copy: the finished UI, no motion
+ * copy: a decorative duplicate (fold layers), so no ids
  */
-export default function BuildSection({ build, mode = 'scroll', active = false }) {
+export default function BuildSection({ build, mode = 'scroll', at = 0, onTimeline, copy = false }) {
   const { Ship, sketch, wire } = boards[build.key]
   const root = useRef(null)
-  const tlRef = useRef(null)
   const paths = useMemo(() => sketch(makeRough(seedOf(build.key))), [sketch, build.key])
 
   useLayoutEffect(() => {
@@ -76,7 +77,7 @@ export default function BuildSection({ build, mode = 'scroll', active = false })
         setStage(p < tWire ? 0 : p < tShip ? 1 : 2)
       })
 
-      if (mode === 'play') { tlRef.current = tl.duration(2.4); return }
+      if (mode === 'scrub') { tl.progress(at); onTimeline?.(tl); return }
 
       const mm = gsap.matchMedia()
       // Desktop: pin and let the scroll draw it.
@@ -88,23 +89,18 @@ export default function BuildSection({ build, mode = 'scroll', active = false })
         ScrollTrigger.create({ trigger: q('.board')[0], start: 'top 75%', once: true, onEnter: () => tl.duration(2.6).play() })
       })
     }, root)
-    return () => { tlRef.current = null; ctx.revert() }
-  }, [mode])
-
-  // In the fold stage: draw it again each time this face is revealed.
-  useLayoutEffect(() => {
-    if (mode === 'play' && active && tlRef.current) tlRef.current.restart()
-  }, [mode, active])
+    return () => { if (mode === 'scrub') onTimeline?.(null); ctx.revert() }
+  }, [mode]) // eslint-disable-line react-hooks/exhaustive-deps -- `at` only seeds the first frame
 
   const { proof } = build
   return (
-    <section className="build" ref={root} aria-labelledby={mode === 'still' ? undefined : `build-${build.key}`}>
+    <section className="build" ref={root} aria-labelledby={copy || mode === 'still' ? undefined : `build-${build.key}`}>
       <aside className="build__aside">
         <div className="build__head">
           <span className="build__num">{build.n}</span>
           <Typed text={build.command} className="mono build__cmd" />
         </div>
-        <h3 className="build__title" id={mode === 'still' ? undefined : `build-${build.key}`}>{build.title}</h3>
+        <h3 className="build__title" id={copy || mode === 'still' ? undefined : `build-${build.key}`}>{build.title}</h3>
         <ol className="stages mono">
           {STAGES.map((s, i) => (
             <li key={s} className={`stage${i === 2 ? ' stage--ship' : ''}`}><span>{s}</span><span>{build.stages[i]}</span></li>

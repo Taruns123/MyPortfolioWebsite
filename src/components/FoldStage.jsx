@@ -1,37 +1,49 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { gsap, ScrollTrigger, useScroll } from '../lib/motion.jsx'
 import Hero from '../sections/Hero.jsx'
-import BuildsFace from './BuildsFace.jsx'
+import BuildSection from './BuildSection.jsx'
+import { builds } from '../content/builds.js'
 import Process from '../sections/Process.jsx'
 import Work from '../sections/Work.jsx'
 import About from '../sections/About.jsx'
 import Contact, { EnvelopeFront } from '../sections/Contact.jsx'
 
 /**
- * The homepage as a napkin on a desk. It starts fully open with the first
- * section on it. Each scroll step folds half of the napkin over toward you;
- * the back of that flap carries the next section, so the napkin halves in
- * size with every fold (the camera eases in to keep it readable):
+ * The homepage as a napkin on a desk. It starts fully open with the hero on
+ * it. Each fold turns half of the napkin over toward you; the back of that
+ * flap carries the next section. The paper halves every fold, so the camera
+ * zooms back in on every second fold and the faces alternate wide / tall:
  *
- *   open (hero) → fold right over → builds → fold bottom up (zoom) →
- *   process + work → fold right over → about → fold bottom up → packet
+ *   hero → SaaS → store → AI → tools → process → work → about → packet
  *
- * The folded packet drops into an open envelope, the flap closes, and the
- * envelope turns over to its addressed front. The last step flips it to the
- * letter (the contact form).
+ * Each build face gets an extra scroll step before it folds away, which
+ * draws it: sketch → wireframe → shipped. The folded packet then drops into
+ * an open envelope, the flap closes, the envelope turns to its address side,
+ * and the last step flips it to the letter (the contact form).
  */
 
 const FACES = [
   { hashes: ['#top'], render: (p) => <Hero still={p.still} /> },
-  { hashes: ['#builds'], render: (p) => <BuildsFace {...p} /> },
-  { hashes: ['#process', '#work'], render: (p) => <div className="face-pw"><Process still={p.still} /><Work still={p.still} /></div> },
+  ...builds.map((b, i) => ({
+    hashes: i === 0 ? ['#builds'] : [],
+    draws: true,
+    render: (p) => <BuildSection build={b} mode="scrub" at={p.at} onTimeline={p.onTimeline} copy={p.still} />,
+  })),
+  { hashes: ['#process'], render: (p) => <Process still={p.still} /> },
+  { hashes: ['#work'], render: (p) => <Work still={p.still} /> },
   { hashes: ['#about'], render: (p) => <About still={p.still} /> },
 ]
-// one entry per fold: which way it folds, and how far the camera zooms in after
-const FOLDS = [{ axis: 'v', zoom: 1 }, { axis: 'h', zoom: 2 }, { axis: 'v', zoom: 1 }, { axis: 'h', zoom: 1 }]
+// one fold per face: which way it folds, and how far the camera zooms in after
+const FOLDS = FACES.map((_, i) => (i % 2 === 0 ? { axis: 'v', zoom: 1 } : { axis: 'h', zoom: i === FACES.length - 1 ? 1 : 2 }))
 const PACKET = FOLDS.length // the stage after the last fold: the folded packet
-const STEPS = FOLDS.length + 2 // the folds, into the envelope, flip to write
+// the scroll timeline, one snap point per segment
+const SEGS = [
+  ...FACES.flatMap((f, k) => (f.draws ? [{ type: 'draw', k }, { type: 'fold', k }] : [{ type: 'fold', k }])),
+  { type: 'insert' },
+  { type: 'flip' },
+]
+const STEPS = SEGS.length
 
 const clamp = (v) => Math.min(1, Math.max(0, v))
 const smooth = (t) => t * t * (3 - 2 * t)
@@ -48,7 +60,8 @@ function sizesFor(W, H) {
 }
 
 const Blank = () => <div className="fold__blank" />
-const Face = ({ i, ...p }) => (i < FACES.length ? FACES[i].render({ still: true, ...p }) : <Blank />)
+const Face = ({ i, at }) => (i < FACES.length ? FACES[i].render({ still: true, at }) : <Blank />)
+const orient = ([w, h]) => (w > h ? 'l' : 'p')
 
 function measureDesk() {
   const rail = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rail-h')) || 42
@@ -76,9 +89,8 @@ export default function FoldStage() {
 
   const [dims, setDims] = useState(measureDesk)
   const [idx, setIdx] = useState(0)
-  const [resting, setResting] = useState(true)
   const [flip, setFlip] = useState(false)
-  const [tab, setTab] = useState(0)
+  const liveTl = useRef(null) // the live build face's sketch → ship timeline
   const sizes = sizesFor(dims.W, dims.H)
   const sizesRef = useRef(sizes)
   sizesRef.current = sizes
@@ -90,10 +102,9 @@ export default function FoldStage() {
   }, [])
 
   useLayoutEffect(() => {
-    let cur = { idx: 0, rest: true, flip: false }
+    let cur = { idx: 0, flip: false }
     // flushSync: the napkin's size changes with the stage, and it must not lag the transforms by a frame
     const setI = (k) => { if (k !== cur.idx) { cur.idx = k; flushSync(() => setIdx(k)) } }
-    const setRest = (r) => { if (r !== cur.rest) { cur.rest = r; setResting(r) } }
     const setF = (f) => { if (f !== cur.flip) { cur.flip = f; setFlip(f) } }
     const show = (el, on) => { if (el) el.style.visibility = on ? 'visible' : 'hidden' }
 
@@ -120,15 +131,28 @@ export default function FoldStage() {
 
     const render = (progress) => {
       const pos = Math.min(progress * STEPS, STEPS - 1e-4)
-      const k = Math.floor(pos)
-      const t = pos - k
+      const j = Math.floor(pos)
+      const t = pos - j
+      const seg = SEGS[j]
       const S = sizesRef.current
 
-      if (k < FOLDS.length) {
+      if (seg.type === 'draw') {
+        // a build face at rest; the scroll draws it
+        setI(seg.k)
+        show(live.current, true)
+        show(rig.current, false)
+        nap.current.classList.remove('is-folding')
+        gsap.set(nap.current, { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 1, autoAlpha: 1 })
+        liveTl.current?.progress(t)
+        show(env3d.current, false)
+        show(letter.current, false)
+        setF(false)
+      } else if (seg.type === 'fold') {
         // fold k: face k → face k+1
+        const k = seg.k
         const folding = t > 0.002
         setI(k)
-        setRest(!folding)
+        if (FACES[k].draws) liveTl.current?.progress(1)
         show(live.current, !folding)
         show(rig.current, folding)
         nap.current.classList.toggle('is-folding', folding)
@@ -146,10 +170,9 @@ export default function FoldStage() {
         show(env3d.current, false)
         show(letter.current, false)
         setF(false)
-      } else if (k === PACKET) {
+      } else if (seg.type === 'insert') {
         // the folded packet drops into an open envelope, the flap closes, it turns over
         setI(PACKET)
-        setRest(true)
         const moving = t > 0.002
         nap.current.classList.remove('is-folding')
         gsap.set(nap.current, { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 1, autoAlpha: moving ? 0 : 1 })
@@ -207,7 +230,7 @@ export default function FoldStage() {
 
     // Nav links and deep links land on the right fold.
     const steps = { '#contact': STEPS }
-    FACES.forEach((f, i) => f.hashes.forEach((h) => { steps[h] = i }))
+    FACES.forEach((f, i) => f.hashes.forEach((h) => { steps[h] = SEGS.findIndex((sg) => sg.k === i) }))
     window.__foldGoTo = (hash) => {
       if (!(hash in steps)) return false
       const y = st.start + (steps[hash] / STEPS) * (st.end - st.start)
@@ -223,28 +246,28 @@ export default function FoldStage() {
   const f = FOLDS[Math.min(n, FOLDS.length - 1)]
   const next = sizes[Math.min(n + 1, PACKET)]
   const box = (i) => ({ width: sizes[i][0], height: sizes[i][1] })
-  const shared = { tab, setTab }
-  // each fold leaves one more layer of napkin under the top face
-  const stack = Array.from({ length: n }, (_, i) => `${(i + 1) * 2}px ${(i + 1) * 2}px 0 ${i % 2 ? '#d8d0bc' : '#e6dfcd'}`)
+  const onTimeline = (tl) => { liveTl.current = tl }
+  // each fold leaves one more layer of napkin under the top face (the first few show)
+  const stack = Array.from({ length: Math.min(n, 4) }, (_, i) => `${(i + 1) * 2}px ${(i + 1) * 2}px 0 ${i % 2 ? '#d8d0bc' : '#e6dfcd'}`)
 
   return (
     <section className="fold" ref={root} aria-label="Tarun Shetty, full-stack developer">
       <div className="fold__desk" ref={desk}>
         <div className={`nap nap--${f.axis}`} ref={nap} style={{ width: w, height: h, '--stack': stack.length ? stack.join(', ') + ',' : '' }}>
-          <div className="nap__live" ref={live}>
-            {n < FACES.length ? FACES[n].render({ still: false, active: resting, ...shared }) : <Blank />}
+          <div className="nap__live" ref={live} data-o={orient(sizes[n])}>
+            <Fragment key={n}>{n < FACES.length ? FACES[n].render({ still: false, at: 0, onTimeline }) : <Blank />}</Fragment>
           </div>
           {n < PACKET && (
             <div className="nap__rig" ref={rig} aria-hidden="true">
               <i className="nap__keepshadow" />
-              <div className="nap__keep"><div className="nap__face" style={box(n)}><Face i={n} {...shared} /></div><i className="nap__land" ref={land} /></div>
+              <div className="nap__keep"><div className="nap__face" style={box(n)} data-o={orient(sizes[n])}><Face key={n} i={n} at={1} /></div><i className="nap__land" ref={land} /></div>
               <div className="nap__flap" ref={flap}>
                 <div className="nap__side nap__side--front">
-                  <div className="nap__face nap__face--shift" style={box(n)}><Face i={n} {...shared} /></div>
+                  <div className="nap__face nap__face--shift" style={box(n)} data-o={orient(sizes[n])}><Face key={n} i={n} at={1} /></div>
                   <i className="nap__shade" ref={shadeFront} />
                 </div>
                 <div className="nap__side nap__side--back">
-                  <div className="nap__face" style={{ width: next[0], height: next[1], transform: `scale(${1 / f.zoom})` }}><Face i={n + 1} {...shared} /></div>
+                  <div className="nap__face" style={{ width: next[0], height: next[1], transform: `scale(${1 / f.zoom})` }} data-o={orient(next)}><Face key={n + 1} i={n + 1} at={0} /></div>
                   <i className="nap__shade" ref={shadeBack} />
                 </div>
               </div>
