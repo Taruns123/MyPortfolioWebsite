@@ -68,8 +68,8 @@ const orient = ([w, h]) => (w > h ? 'l' : 'p')
 
 function measureDesk() {
   const rail = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rail-h')) || 42
-  const W = Math.round(Math.min(1320, innerWidth - 64))
-  const H = Math.round(innerHeight - rail - 48)
+  const W = Math.round(Math.min(1360, innerWidth - 40))
+  const H = Math.round(innerHeight - rail - 28)
   return { W, H, rail }
 }
 
