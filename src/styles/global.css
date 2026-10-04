@@ -650,16 +650,22 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
   --edge-l: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 1000' preserveAspectRatio='none'%3E%3Cpath transform='matrix%280 1 1 0 0 0%29' d='M0 1.12 Q31.2 1.59 62.5 0.99 Q93.8 1.76 125.0 3.35 Q156.2 2.21 187.5 1.37 Q218.8 2.48 250.0 2.59 Q281.2 2.61 312.5 2.23 Q343.8 1.26 375.0 1.41 Q406.2 2.96 437.5 3.14 Q468.8 1.78 500.0 1.22 Q531.2 1.70 562.5 2.86 Q593.8 2.40 625.0 1.17 Q656.2 1.42 687.5 2.15 Q718.8 1.53 750.0 1.48 Q781.2 0.97 812.5 1.66 Q843.8 2.21 875.0 3.91 Q906.2 3.76 937.5 3.37 Q968.8 2.21 1000.0 1.77 V5 H0 Z'/%3E%3C/svg%3E");
   --edge-r: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 1000' preserveAspectRatio='none'%3E%3Cpath transform='matrix%280 1 -1 0 5 0%29' d='M0 2.72 Q31.2 2.89 62.5 1.99 Q93.8 2.26 125.0 2.25 Q156.2 2.95 187.5 3.87 Q218.8 2.56 250.0 2.35 Q281.2 1.85 312.5 2.64 Q343.8 3.75 375.0 3.57 Q406.2 2.11 437.5 1.39 Q468.8 1.63 500.0 1.29 Q531.2 2.16 562.5 3.71 Q593.8 4.02 625.0 3.42 Q656.2 2.65 687.5 1.6 Q718.8 1.22 750.0 1.41 Q781.2 1.84 812.5 3.17 Q843.8 3.80 875.0 3.81 Q906.2 2.02 937.5 1.43 Q968.8 2.25 1000.0 3.84 V5 H0 Z'/%3E%3C/svg%3E");
   --fibre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.09 .6' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .36 0 0 0 0 .25 0 0 0 .3 -.11'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E");
-  --paper-edge:
-    linear-gradient(#000 0 0) center / calc(100% - 10px) calc(100% - 10px) no-repeat,
-    var(--edge-t) top / calc(100% - 10px) 5px no-repeat, var(--edge-b) bottom / calc(100% - 10px) 5px no-repeat,
-    var(--edge-l) left / 5px calc(100% - 10px) no-repeat, var(--edge-r) right / 5px calc(100% - 10px) no-repeat;
+  --paper-edge: linear-gradient(#000 0 0) center / calc(100% - 10px) calc(100% - 10px) no-repeat, var(--mt), var(--mb), var(--ml), var(--mr);
   --ink-hand: #1d2b8f;
   --hand: 'Caveat Variable', 'Caveat', 'Bradley Hand', cursive;
 }
 .nap { background: none; box-shadow: none; filter: var(--stack,) drop-shadow(0 1px 1px rgba(0, 0, 30, .3)) drop-shadow(0 22px 26px rgba(0, 0, 30, .32)); }
 .nap.is-folding { filter: none; }
-.nap__live, .nap__keep, .nap__side, .env3d__packet { -webkit-mask: var(--paper-edge); mask: var(--paper-edge); }
+.nap__live, .nap__keep, .nap__side, .env3d__packet {
+  --mt: var(--edge-t) top / calc(100% - 10px) 5px no-repeat; --mb: var(--edge-b) bottom / calc(100% - 10px) 5px no-repeat;
+  --ml: var(--edge-l) left / 5px calc(100% - 10px) no-repeat; --mr: var(--edge-r) right / 5px calc(100% - 10px) no-repeat;
+  -webkit-mask: var(--paper-edge); mask: var(--paper-edge);
+}
+/* folded edges are crisp creases, not torn paper */
+.fold-t { --mt: linear-gradient(#000 0 0) top / 100% 5px no-repeat; }
+.fold-b { --mb: linear-gradient(#000 0 0) bottom / 100% 5px no-repeat; }
+.fold-l { --ml: linear-gradient(#000 0 0) left / 5px 100% no-repeat; }
+.fold-r { --mr: linear-gradient(#000 0 0) right / 5px 100% no-repeat; }
 .nap__keepshadow { box-shadow: 0 2px 2px rgba(0, 0, 30, .25), 0 22px 30px rgba(0, 0, 30, .3); }
 .nap section, .fold__blank { background: var(--fibre), var(--grain), var(--emboss), var(--paper); }
 /* a napkin never lies perfectly flat: soft light and shade across it */
