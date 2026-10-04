@@ -277,8 +277,30 @@ a.work__row:hover { background: var(--ink); color: var(--paper); padding-left: c
 .envelope__flap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #efe3c6, #e2d0a6); clip-path: polygon(0.4% 0, 99.6% 0, 50% calc(100% - 3px)); }
 .envelope__actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 
-/* sections folding away as you scroll past them */
-.fold-away::before { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: linear-gradient(to top, rgba(40, 32, 18, .05), rgba(40, 32, 18, .5)); opacity: var(--fold, 0); }
+/* sections folding closed as you scroll past: the bottom of the napkin is
+   folded up over the content, crease first */
+.fold-away { position: relative; }
+.fold-away::before {
+  content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: var(--fold, 0);
+  background: linear-gradient(to top, rgba(40, 32, 18, .28), rgba(40, 32, 18, 0) 70%);
+}
+.fold-flap {
+  position: absolute; left: -5%; right: -5%; bottom: 0; height: 0; z-index: 4; pointer-events: none;
+  transform-origin: 50% 100%; /* wider than the section so the perspective lift never exposes its sides */
+  background: var(--grain), var(--emboss), #f3eee2;
+  /* shadow cast upward by the lifting edge onto the content still showing */
+  box-shadow: 0 calc(-14px - 22px * var(--edge, 0)) calc(18px + 26px * var(--edge, 0)) calc(-10px) rgba(40, 32, 18, calc(.18 + .22 * var(--edge, 0)));
+}
+/* the free top edge: a thin bright lip with a darker underside while it's lifted */
+.fold-flap::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 14px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, .85), rgba(255, 255, 255, 0) 30%, rgba(60, 48, 26, calc(.06 + .16 * var(--edge, 0))) 100%);
+}
+/* the crease: the sheet bending back on itself, a rounded doubled edge */
+.fold-flap::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 22px;
+  background: linear-gradient(to top, rgba(118, 106, 82, .28), rgba(255, 255, 255, .9) 35%, rgba(255, 255, 255, .25) 65%, rgba(118, 106, 82, .12));
+}
 
 @media (prefers-reduced-motion: reduce) {
   .envelope__back.napkin { transform: none; }

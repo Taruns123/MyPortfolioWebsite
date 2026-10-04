@@ -2,42 +2,50 @@ import { useLayoutEffect } from 'react'
 import { gsap, prefersReducedMotion } from './motion.jsx'
 
 /**
- * Sections marked .fold-away fold back along their bottom edge as they
- * leave the screen, like a sheet being folded over, revealing the section
- * underneath. A shade deepens on the folding part (--fold, 0 → 1).
+ * Sections marked .fold-away get folded closed as you scroll past them:
+ * the bottom of the napkin is folded up over the content, crease first.
  *
- * Desktop: real 3D (rotateX around the crease). Phones: a lighter 2D
- * version (squash + shade) so scrolling stays smooth. Reduced motion: none.
+ * What sells it as paper (rather than a panel sliding in):
+ *  - the flap grows from the crease, showing the paper's blank back
+ *  - a rounded, doubled edge at the crease where the sheet bends back
+ *  - the free top edge lifts toward you mid-fold, then settles flat
+ *  - a soft shadow cast from that edge onto the content still showing
+ * The content itself never moves, so it stays sharp until it's covered.
  */
 export function useFolds() {
   useLayoutEffect(() => {
     if (prefersReducedMotion()) return
-    const mm = gsap.matchMedia()
-    const sections = gsap.utils.toArray('.fold-away')
+    const made = []
+    const tweens = []
 
-    mm.add('(min-width: 900px)', () => {
-      sections.forEach((el) => {
-        gsap.fromTo(el,
-          { rotationX: 0, '--fold': 0 },
-          {
-            rotationX: 62, '--fold': 1, ease: 'power1.in',
-            transformOrigin: '50% 100%', transformPerspective: 1400,
-            scrollTrigger: { trigger: el, start: 'bottom 75%', end: 'bottom top', scrub: 0.4 },
-          })
-      })
+    gsap.utils.toArray('.fold-away').forEach((section) => {
+      const flap = document.createElement('div')
+      flap.className = 'fold-flap'
+      flap.setAttribute('aria-hidden', 'true')
+      section.appendChild(flap)
+      made.push(flap)
+
+      const state = { p: 0 }
+      const render = () => {
+        const p = state.p
+        const full = Math.min(section.offsetHeight, window.innerHeight * 0.95)
+        const lift = Math.sin(Math.PI * p) // 0 → 1 → 0: the edge rises mid-fold, then lies flat
+        flap.style.height = `${(full * p).toFixed(1)}px`
+        flap.style.transform = `perspective(1400px) rotateX(${(lift * 22).toFixed(2)}deg)`
+        flap.style.setProperty('--edge', lift.toFixed(3))
+        section.style.setProperty('--fold', (p * 0.6).toFixed(3))
+      }
+
+      render()
+      tweens.push(gsap.to(state, {
+        p: 1, ease: 'power2.in', onUpdate: render,
+        scrollTrigger: { trigger: section, start: 'bottom 72%', end: 'bottom 6%', scrub: 0.5, onRefresh: render },
+      }))
     })
 
-    mm.add('(max-width: 899px)', () => {
-      sections.forEach((el) => {
-        gsap.fromTo(el,
-          { scaleY: 1, '--fold': 0 },
-          {
-            scaleY: 0.86, '--fold': 0.8, ease: 'power1.in', transformOrigin: '50% 100%',
-            scrollTrigger: { trigger: el, start: 'bottom 60%', end: 'bottom top', scrub: 0.3 },
-          })
-      })
-    })
-
-    return () => mm.revert()
+    return () => {
+      tweens.forEach((t) => { t.scrollTrigger?.kill(); t.kill() })
+      made.forEach((f) => { f.parentNode?.style.removeProperty('--fold'); f.remove() })
+    }
   }, [])
 }
