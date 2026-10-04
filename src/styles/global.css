@@ -629,7 +629,7 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 .env3d__flap { left: 0; right: 0; top: 0; height: 56%; transform-origin: 50% 0; transform-style: preserve-3d; backface-visibility: visible; -webkit-backface-visibility: visible; }
 .env3d__flap > div { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .env3d__flap-out { clip-path: polygon(0 0, 100% 0, 50% 100%); background: var(--grain), linear-gradient(180deg, #efe3c6, #e2d0a6); }
-.env3d__flap-in { clip-path: polygon(0 100%, 100% 100%, 50% 0); transform: rotateX(180deg); background: repeating-linear-gradient(45deg, var(--blue) 0 7px, #1f2bd6 7px 14px); }
+.env3d__flap-in { clip-path: polygon(0 100%, 100% 100%, 50% 0); transform: rotateX(180deg); background: var(--fibre), var(--grain), linear-gradient(0deg, #c3a979, #d2bb8d); }
 .env3d__front { inset: 0; display: grid; transform: rotateY(180deg) translateZ(1px); }
 .env3d__front .envelope__face { min-height: 0; }
 
@@ -662,10 +662,10 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
   mask: linear-gradient(#000 0 0) center / calc(100% - 10px) calc(100% - 10px) no-repeat, var(--mt), var(--mb), var(--ml), var(--mr);
 }
 /* the hinge of a fold in progress is a crisp crease, so the two halves meet */
-.fold-t { --mt: linear-gradient(#000 0 0) top / 100% 5px no-repeat; }
-.fold-b { --mb: linear-gradient(#000 0 0) bottom / 100% 5px no-repeat; }
-.fold-l { --ml: linear-gradient(#000 0 0) left / 5px 100% no-repeat; }
-.fold-r { --mr: linear-gradient(#000 0 0) right / 5px 100% no-repeat; }
+.fold-t { --mt: linear-gradient(#000 0 0) top / calc(100% - 5px) 5px no-repeat; }
+.fold-b { --mb: linear-gradient(#000 0 0) bottom / calc(100% - 5px) 5px no-repeat; }
+.fold-l { --ml: linear-gradient(#000 0 0) left / 5px calc(100% - 5px) no-repeat; }
+.fold-r { --mr: linear-gradient(#000 0 0) right / 5px calc(100% - 5px) no-repeat; }
 .nap__keepshadow { box-shadow: 0 2px 2px rgba(0, 0, 30, .25), 0 22px 30px rgba(0, 0, 30, .3); }
 .nap section, .fold__blank { background: var(--fibre), var(--grain), var(--emboss), var(--paper); }
 /* a napkin never lies perfectly flat: soft light and shade across it */
