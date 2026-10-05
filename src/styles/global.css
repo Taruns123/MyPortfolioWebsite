@@ -754,3 +754,33 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 .nap__live, .nap__face { background: var(--fibre), var(--grain), var(--emboss), var(--paper); }
 .nap .nap__live > *, .nap .nap__face > * { position: absolute; inset: 18px; width: auto; height: auto; min-height: 0; }
 .nap .section-head { border-top: 0; }
+
+/* ==========================================================================
+   Block type: headlines reversed out of solid ink, one block per line
+   ========================================================================== */
+.blk {
+  background: var(--ink); color: var(--paper); padding: .06em .2em .02em;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.section-head h2, .about__text h2 { line-height: 1.18; max-width: 22ch; }
+.section-head h2 .blk, .about__text h2 .blk { display: inline; }
+.section-head h2, .about__text h2, .build__title { transform: rotate(-1.2deg); transform-origin: left center; }
+.build__title { line-height: 1.25; }
+/* the number is a hollow outline next to the solid title */
+.build__num { color: transparent; -webkit-text-stroke: 2px var(--ink); font-size: clamp(80px, 9vw, 150px); line-height: .78; }
+/* hero: the napkin itself is a blue label stuck on */
+.hero__title em { background: var(--blue); color: var(--paper); padding: 0 .12em .02em; transform: rotate(-2.5deg); box-shadow: .06em .06em 0 var(--ink); }
+.hero__title em .scribble { display: none; }
+
+/* inside the napkin: bigger headlines, and the blocks wipe in when a face arrives */
+.nap .hero__title { font-size: clamp(44px, 7vw, 124px); }
+.nap .section-head h2 { font-size: clamp(30px, 3.4vw, 58px); }
+.nap .about__text h2 { font-size: clamp(32px, 3.6vw, 60px); }
+.nap .build__num { font-size: clamp(64px, 7vw, 120px); }
+.nap [data-o=p] .build__num { font-size: clamp(56px, 5.6vw, 92px); }
+.nap .build__title { font-size: clamp(24px, 2.6vw, 40px); }
+.nap [data-o=p] .build__title { font-size: clamp(22px, 2.2vw, 32px); }
+@keyframes blk-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+/* the whole heading wipes (a clip on the inline block would cut wrapped lines); no clip is left behind */
+.nap__live .section-head h2, .nap__live .about__text h2, .nap__live .build__title, .nap__live .hero__title em { animation: blk-in .6s var(--ease-out) .15s backwards; }
+@media (prefers-reduced-motion: reduce) { .nap__live .section-head h2, .nap__live .about__text h2, .nap__live .build__title, .nap__live .hero__title em { animation: none; } }

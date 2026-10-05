@@ -100,7 +100,7 @@ export default function BuildSection({ build, mode = 'scroll', at = 0, onTimelin
           <span className="build__num">{build.n}</span>
           <Typed text={build.command} className="mono build__cmd" />
         </div>
-        <h3 className="build__title" id={copy || mode === 'still' ? undefined : `build-${build.key}`}>{build.title}</h3>
+        <h3 className="build__title" id={copy || mode === 'still' ? undefined : `build-${build.key}`}><span className="blk">{build.title}</span></h3>
         <ol className="stages mono">
           {STAGES.map((s, i) => (
             <li key={s} className={`stage${i === 2 ? ' stage--ship' : ''}`}><span>{s}</span><span>{build.stages[i]}</span></li>

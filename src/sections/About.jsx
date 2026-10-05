@@ -17,7 +17,7 @@ export default function About({ still = false }) {
       </figure>
       <div className="about__text">
         <span className="mono">About</span>
-        <h2>{about.title}</h2>
+        <h2><span className="blk">{about.title}</span></h2>
         {about.paragraphs.map((p) => <p key={p.slice(0, 20)}>{rich(p)}</p>)}
         <dl className="about__facts mono">
           {about.facts.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}

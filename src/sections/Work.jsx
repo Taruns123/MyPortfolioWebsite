@@ -30,7 +30,7 @@ export default function Work({ still = false }) {
     <section className="work dogear dogear--br" id={still ? undefined : 'work'}>
       <header className="section-head">
         <span className="mono">Real work</span>
-        <h2>Things I have actually shipped. <em>Two new case studies are in progress.</em></h2>
+        <h2><span className="blk">Things I have actually shipped.</span> <em>Two new case studies are in progress.</em></h2>
       </header>
       <ul className="work__list" onPointerLeave={() => setImg(null)}>
         {work.map((w, i) => {

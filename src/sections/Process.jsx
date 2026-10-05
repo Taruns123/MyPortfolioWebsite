@@ -49,7 +49,7 @@ export default function Process({ still = false }) {
     <section className="process dogear dogear--bl" id={still ? undefined : 'process'} ref={root}>
       <header className="section-head">
         <span className="mono">How I work</span>
-        <h2>{process.title}</h2>
+        <h2><span className="blk">{process.title}</span></h2>
       </header>
       <svg className="process__line" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
         <path d={line} />
