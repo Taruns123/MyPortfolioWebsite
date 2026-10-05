@@ -70,8 +70,7 @@ export const about = {
     'Now I build for founders and small teams directly. I take two projects at a time so each one gets proper attention, and I would rather ==ship one thing that works== than five that almost do.',
     'Outside of client work I build things to learn: a charting library, a blockchain land registry, a restaurant billing app. They are below.',
   ],
-  // Swap for a real photo at /public/assets/tarun.jpg and set photo: '/assets/tarun.jpg'
-  photo: '',
+  photo: '/assets/tarun.jpg',
   facts: [
     ['Based in', 'Mumbai, India'],
     ['Experience', '~2.5 years, production'],

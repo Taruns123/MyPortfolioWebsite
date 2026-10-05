@@ -782,3 +782,14 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
     var(--rr, linear-gradient(to left, var(--rim), transparent)) right / 11px 100% no-repeat;
 }
 .fold-t { --rt: none; } .fold-b { --rb: none; } .fold-l { --rl: none; } .fold-r { --rr: none; }
+/* the portrait is printed onto the paper, so the paper's texture shows through it */
+.about__photo img { mix-blend-mode: multiply; }
+.nap .about__photo { width: min(250px, 34vh); }
+.about__photo { transform: rotate(-2.5deg); }
+/* a strip of tape holding it on */
+.about__photo::before {
+  content: ''; position: absolute; z-index: 2; top: -10px; left: 50%; width: 38%; height: 26px; translate: -50% 0; rotate: 4deg;
+  background: linear-gradient(rgba(255, 255, 255, .25), rgba(255, 255, 255, 0)), rgba(236, 226, 196, .72);
+  box-shadow: 0 1px 2px rgba(60, 40, 10, .18);
+  -webkit-mask: linear-gradient(90deg, transparent 0 2px, #000 2px calc(100% - 2px), transparent calc(100% - 2px));
+}
