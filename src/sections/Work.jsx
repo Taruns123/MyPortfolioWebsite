@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { work } from '../content/work.js'
 import { Go } from '../components/Transition.jsx'
 import { gsap } from '../lib/motion.jsx'
@@ -50,9 +51,13 @@ export default function Work({ still = false }) {
           )
         })}
       </ul>
-      <div className={`work__peek${img ? ' is-on' : ''}`} ref={peek} aria-hidden="true">
-        {img && <img src={img} alt="" />}
-      </div>
+      {/* rendered at page level: inside the folding napkin, a transformed and masked parent would trap it */}
+      {!still && createPortal(
+        <div className={`work__peek${img ? ' is-on' : ''}`} ref={peek} aria-hidden="true">
+          {img && <img src={img} alt="" />}
+        </div>,
+        document.body,
+      )}
     </section>
   )
 }

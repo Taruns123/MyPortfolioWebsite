@@ -44,6 +44,9 @@ const SEGS = [
   { type: 'flip' },
 ]
 const STEPS = SEGS.length
+const REST = 0.3 // the first part of a fold or the envelope step is a pause, so each face can be read and used
+const PER_STEP = 150 // scroll distance per step, in % of the viewport
+const afterRest = (t) => Math.min(1, Math.max(0, (t - REST) / (1 - REST)))
 
 const clamp = (v) => Math.min(1, Math.max(0, v))
 const smooth = (t) => t * t * (3 - 2 * t)
@@ -135,7 +138,7 @@ export default function FoldStage() {
     const render = (progress) => {
       const pos = Math.min(progress * STEPS, STEPS - 1e-4)
       const j = Math.floor(pos)
-      const t = pos - j
+      let t = pos - j
       const seg = SEGS[j]
       const S = sizesRef.current
 
@@ -151,8 +154,9 @@ export default function FoldStage() {
         show(letter.current, false)
         setF(false)
       } else if (seg.type === 'fold') {
-        // fold k: face k → face k+1
+        // fold k: face k → face k+1, after a pause on face k
         const k = seg.k
+        t = afterRest(t)
         const folding = t > 0.002
         setI(k)
         if (FACES[k].draws) liveTl.current?.progress(1)
@@ -175,6 +179,7 @@ export default function FoldStage() {
         setF(false)
       } else if (seg.type === 'insert') {
         // the folded packet drops into an open envelope, the flap closes, it turns over
+        t = afterRest(t)
         setI(PACKET)
         const moving = t > 0.002
         nap.current.classList.remove('is-folding')
@@ -221,10 +226,11 @@ export default function FoldStage() {
     const st = ScrollTrigger.create({
       trigger: root.current,
       start: 'top top',
-      end: `+=${STEPS * 100}%`,
+      end: `+=${STEPS * PER_STEP}%`,
       pin: true,
       scrub: 0.6,
-      snap: { snapTo: 1 / STEPS, duration: { min: 0.25, max: 0.8 }, delay: 0.05, ease: 'power1.inOut' },
+      // not directional: a small nudge settles back onto the current face instead of turning the page
+      snap: { snapTo: 1 / STEPS, directional: false, duration: { min: 0.3, max: 0.9 }, delay: 0.12, ease: 'power1.inOut' },
       onRefresh: (self) => { measure(); render(self.progress) },
       onUpdate: (self) => render(self.progress),
     })
