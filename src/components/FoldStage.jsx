@@ -67,7 +67,7 @@ const cls = (side) => `fold-${side}`
 
 const Blank = () => <div className="fold__blank" />
 const Face = ({ i, at }) => (i < FACES.length ? FACES[i].render({ still: true, at }) : <Blank />)
-const orient = ([w, h]) => (w > h ? 'l' : 'p')
+const orient = ([w, h]) => (w > h * 1.3 ? 'l' : 'p') // near-square panels stack too
 
 function measureDesk() {
   const rail = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rail-h')) || 42
@@ -97,6 +97,8 @@ export default function FoldStage() {
   const [idx, setIdx] = useState(0)
   const [flip, setFlip] = useState(false)
   const liveTl = useRef(null) // the live build face's sketch → ship timeline
+  const measureRef = useRef(null)
+  const [fits, setFits] = useState(() => FACES.map(() => 1)) // per face: scale needed to fit its panel
   const sizes = sizesFor(dims.W, dims.H)
   const sizesRef = useRef(sizes)
   sizesRef.current = sizes
@@ -106,6 +108,32 @@ export default function FoldStage() {
     addEventListener('resize', onResize)
     return () => removeEventListener('resize', onResize)
   }, [])
+
+  // Short screens: measure each face once per size and shrink the ones that would overflow their panel.
+  useLayoutEffect(() => {
+    let alive = true
+    const measure = () => {
+      if (!alive || !measureRef.current) return
+      const next = [...measureRef.current.querySelectorAll('.nap__fit')].map((el) => {
+        const box = el.parentElement
+        const w = box.clientWidth - 36
+        const h = box.clientHeight - 36
+        let f = 1
+        for (let k = 0; k < 5; k++) {
+          el.style.width = `${w / f}px`
+          el.style.height = `${h / f}px`
+          const need = el.firstElementChild?.scrollHeight ?? 0
+          if (need <= h / f + 1) break
+          f *= ((h / f) / need) * 0.985
+        }
+        return Math.round(f * 1000) / 1000
+      })
+      setFits((old) => (old.every((v, i) => v === next[i]) ? old : next))
+    }
+    measure()
+    document.fonts?.ready.then(measure)
+    return () => { alive = false }
+  }, [dims])
 
   useLayoutEffect(() => {
     let cur = { idx: 0, flip: false }
@@ -256,6 +284,11 @@ export default function FoldStage() {
   const next = sizes[Math.min(n + 1, PACKET)]
   const box = (i) => ({ width: sizes[i][0], height: sizes[i][1] })
   const onTimeline = (tl) => { liveTl.current = tl }
+  const fit = (i, children) => {
+    const f = fits[i] ?? 1
+    const style = f < 1 ? { width: `calc((100% - 36px) / ${f})`, height: `calc((100% - 36px) / ${f})`, right: 'auto', bottom: 'auto', transform: `scale(${f})`, transformOrigin: '0 0' } : undefined
+    return <div className="nap__fit" style={style}>{children}</div>
+  }
   // each fold leaves one more layer of napkin under the top face (the first few show)
   const stack = Array.from({ length: Math.min(n, 4) }, (_, i) => `drop-shadow(${i % 2 ? 1 : 2}px ${i % 2 ? 2 : 1}px 0 ${i % 2 ? '#d8d0bc' : '#e6dfcd'})`)
 
@@ -264,24 +297,33 @@ export default function FoldStage() {
       <div className="fold__desk" ref={desk}>
         <div className={`nap nap--${f.axis}`} ref={nap} style={{ width: w, height: h, '--stack': stack.join(' ') }}>
           <div className="nap__live" ref={live} data-o={orient(sizes[n])}>
-            <Fragment key={n}>{n < FACES.length ? FACES[n].render({ still: false, at: 0, onTimeline }) : <Blank />}</Fragment>
+            <Fragment key={n}>{fit(n, n < FACES.length ? FACES[n].render({ still: false, at: 0, onTimeline }) : <Blank />)}</Fragment>
           </div>
           {n < PACKET && (
             <div className="nap__rig" ref={rig} aria-hidden="true">
               <i className="nap__keepshadow" />
-              <div className="nap__keep"><div className="nap__face" style={box(n)} data-o={orient(sizes[n])}><Face key={n} i={n} at={1} /></div><i className="nap__land" ref={land} /></div>
+              <div className="nap__keep"><div className="nap__face" style={box(n)} data-o={orient(sizes[n])}>{fit(n, <Face key={n} i={n} at={1} />)}</div><i className="nap__land" ref={land} /></div>
               <div className="nap__flap" ref={flap}>
                 <div className={`nap__side nap__side--front ${cls(HINGE[f.axis].front)}`}>
-                  <div className="nap__face nap__face--shift" style={box(n)} data-o={orient(sizes[n])}><Face key={n} i={n} at={1} /></div>
+                  <div className="nap__face nap__face--shift" style={box(n)} data-o={orient(sizes[n])}>{fit(n, <Face key={n} i={n} at={1} />)}</div>
                   <i className="nap__shade" ref={shadeFront} />
                 </div>
                 <div className={`nap__side nap__side--back ${cls(HINGE[f.axis].back)}`}>
-                  <div className="nap__face" style={{ width: next[0], height: next[1], transform: `scale(${1 / f.zoom})` }} data-o={orient(next)}><Face key={n + 1} i={n + 1} at={0} /></div>
+                  <div className="nap__face" style={{ width: next[0], height: next[1], transform: `scale(${1 / f.zoom})` }} data-o={orient(next)}>{fit(n + 1, <Face key={n + 1} i={n + 1} at={0} />)}</div>
                   <i className="nap__shade" ref={shadeBack} />
                 </div>
               </div>
             </div>
           )}
+        </div>
+
+        {/* off-screen copies of every face, used only to measure how much each must shrink */}
+        <div className="nap nap--measure" ref={measureRef} aria-hidden="true">
+          {FACES.map((_, i) => (
+            <div key={i} className="nap__face" style={box(i)} data-o={orient(sizes[i])}>
+              <div className="nap__fit"><Face i={i} at={1} /></div>
+            </div>
+          ))}
         </div>
 
         {/* the open envelope the packet goes into; its front matches the contact envelope exactly */}

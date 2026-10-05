@@ -804,3 +804,6 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 /* the board scales to fit its canvas, however short the screen */
 .nap .build__canvas { position: relative; }
 .nap .board { position: absolute; inset: 14px 20px; width: calc(100% - 40px); height: calc(100% - 28px); max-width: none; }
+.nap--measure { position: fixed; left: -100000px; top: 0; visibility: hidden; pointer-events: none; filter: none; }
+.nap--measure .nap__face { position: relative; }
+.nap--measure .nap__fit { position: absolute; left: 18px; top: 18px; }
