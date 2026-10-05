@@ -26,6 +26,55 @@ export function EnvelopeFront({ status = 'idle', flipped = false, stampRef, onFl
   )
 }
 
+/** A blob of red wax pressed with a TS stamp: spread edge, raised rim, debossed monogram. */
+function WaxSeal() {
+  return (
+    <svg className="seal__wax" viewBox="0 0 120 120" aria-hidden="true">
+      <defs>
+        <radialGradient id="wax" cx="38%" cy="32%" r="75%">
+          <stop offset="0" stopColor="#c8372a" />
+          <stop offset=".55" stopColor="#a1231a" />
+          <stop offset="1" stopColor="#6e110c" />
+        </radialGradient>
+        <radialGradient id="wax-in" cx="60%" cy="65%" r="70%">
+          <stop offset="0" stopColor="#b02a1f" />
+          <stop offset="1" stopColor="#7d150f" />
+        </radialGradient>
+        {/* wax spreads unevenly: wobble the edge */}
+        <filter id="wax-edge" x="-25%" y="-25%" width="150%" height="150%">
+          <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="12" />
+          <feDisplacementMap in="SourceGraphic" scale="9" />
+        </filter>
+        {/* a little surface texture and gloss */}
+        <filter id="wax-sheen" x="-25%" y="-25%" width="150%" height="150%">
+          <feTurbulence type="fractalNoise" baseFrequency=".6" numOctaves="2" seed="3" result="n" />
+          <feDiffuseLighting in="n" surfaceScale=".6" lightingColor="#fff" result="l"><feDistantLight azimuth="225" elevation="55" /></feDiffuseLighting>
+          <feComposite in="l" in2="SourceAlpha" operator="in" result="lit" />
+          <feBlend in="SourceGraphic" in2="lit" mode="multiply" />
+        </filter>
+        <filter id="soft"><feGaussianBlur stdDeviation="1.6" /></filter>
+      </defs>
+      <g filter="url(#wax-sheen)">
+        <path filter="url(#wax-edge)" fill="url(#wax)" d="M60 8c13 0 21 6 30 13s20 18 21 33-3 24-10 33-18 20-35 21-27-6-36-14S10 76 9 61s5-29 14-38S47 8 60 8z" />
+        {/* the pressed disc: shadow on the upper rim, light on the lower */}
+        <circle cx="60" cy="61" r="33" fill="none" stroke="#5a0d09" strokeWidth="3" opacity=".55" transform="translate(-1 -1.4)" />
+        <circle cx="60" cy="61" r="33" fill="none" stroke="#ff9d8a" strokeWidth="2" opacity=".35" transform="translate(1 1.4)" />
+        <circle cx="60" cy="61" r="32" fill="url(#wax-in)" />
+        <circle cx="60" cy="61" r="26" fill="none" stroke="#5a0d09" strokeWidth="1" strokeDasharray="1.5 3" opacity=".6" />
+        {/* the monogram is cut into the wax */}
+        <g fontFamily="Georgia, 'Times New Roman', serif" fontStyle="italic" fontWeight="700" fontSize="30" textAnchor="middle">
+          <text x="61" y="72" fill="#ff8f7c" opacity=".45">TS</text>
+          <text x="59.3" y="70.3" fill="#4d0a06" opacity=".85">TS</text>
+          <text x="60" y="71" fill="#93201a">TS</text>
+        </g>
+      </g>
+      {/* gloss */}
+      <ellipse cx="42" cy="30" rx="15" ry="7" fill="#fff" opacity=".28" transform="rotate(-30 42 30)" filter="url(#soft)" />
+      <ellipse cx="85" cy="86" rx="7" ry="3" fill="#fff" opacity=".18" transform="rotate(-40 85 86)" filter="url(#soft)" />
+    </svg>
+  )
+}
+
 const initial = { name: '', email: '', kind: '', budget: '', message: '' }
 
 /**
@@ -150,7 +199,7 @@ export default function Contact({ stage = false, flip = false }) {
                 {status === 'failed' && <>{contact.failure} <a href={`mailto:${profile.email}`}>{profile.email}</a></>}
               </p>
               <button className="seal" data-cursor="send" disabled={status === 'sending' || !flipped}>
-                <span className="seal__wax" aria-hidden="true">TS</span>
+                <WaxSeal />
                 <span className="seal__label mono">{status === 'sending' ? 'Sealing…' : 'Seal & send'}</span>
               </button>
             </div>
