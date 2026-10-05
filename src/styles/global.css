@@ -785,7 +785,7 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 /* the portrait is printed onto the paper, so the paper's texture shows through it */
 .about__photo img { mix-blend-mode: multiply; }
 .nap .about__photo { width: min(250px, 34vh); }
-.about__photo { transform: rotate(-2.5deg); }
+.about__photo { transform: rotate(-1deg); }
 /* a strip of tape holding it on */
 .about__photo::before {
   content: ''; position: absolute; z-index: 2; top: -10px; left: 50%; width: 38%; height: 26px; translate: -50% 0; rotate: 4deg;
