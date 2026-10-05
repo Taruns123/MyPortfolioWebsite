@@ -793,3 +793,11 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
   box-shadow: 0 1px 2px rgba(60, 40, 10, .18);
   -webkit-mask: linear-gradient(90deg, transparent 0 2px, #000 2px calc(100% - 2px), transparent calc(100% - 2px));
 }
+/* About on the napkin: the photo sits beside the paragraphs, the heading and facts span the width */
+.nap .about { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: none; column-gap: 24px; row-gap: 10px; align-content: start; }
+.nap .about__text { display: contents; }
+.nap .about__text > span, .nap .about__text > h2, .nap .about__facts { grid-column: 1 / -1; }
+.nap .about__text > p { grid-column: 1; }
+.nap .about__facts { margin-top: 10px; }
+.nap .about__photo { grid-column: 2; grid-row: 3 / span 3; position: relative; bottom: auto; right: auto; width: clamp(150px, 15vw, 220px); height: auto; aspect-ratio: 400 / 480; align-self: start; margin: 10px 6px 0 0; }
+.nap .about { align-content: center; }
