@@ -801,3 +801,6 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 .nap .about__facts { margin-top: 10px; }
 .nap .about__photo { grid-column: 2; grid-row: 3 / span 3; position: relative; bottom: auto; right: auto; width: clamp(150px, 15vw, 220px); height: auto; aspect-ratio: 400 / 480; align-self: start; margin: 10px 6px 0 0; }
 .nap .about { align-content: center; }
+/* the board scales to fit its canvas, however short the screen */
+.nap .build__canvas { position: relative; }
+.nap .board { position: absolute; inset: 14px 20px; width: calc(100% - 40px); height: calc(100% - 28px); max-width: none; }
