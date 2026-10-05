@@ -771,3 +771,14 @@ html.has-cursor input, html.has-cursor textarea { cursor: text !important; }
 /* the whole heading wipes (a clip on the inline block would cut wrapped lines); no clip is left behind */
 .nap__live .section-head h2, .nap__live .about__text h2, .nap__live .build__title { animation: blk-in .6s var(--ease-out) .15s backwards; }
 @media (prefers-reduced-motion: reduce) { .nap__live .section-head h2, .nap__live .about__text h2, .nap__live .build__title { animation: none; } }
+/* real paper edges are a touch darker; folds are not */
+.nap__live::before, .nap__keep::before, .nap__side::before, .env3d__packet::before {
+  content: ''; position: absolute; inset: 0; z-index: 6; pointer-events: none;
+  --rim: rgba(128, 92, 44, .26);
+  background:
+    var(--rt, linear-gradient(to bottom, var(--rim), transparent)) top / 100% 11px no-repeat,
+    var(--rb, linear-gradient(to top, var(--rim), transparent)) bottom / 100% 11px no-repeat,
+    var(--rl, linear-gradient(to right, var(--rim), transparent)) left / 11px 100% no-repeat,
+    var(--rr, linear-gradient(to left, var(--rim), transparent)) right / 11px 100% no-repeat;
+}
+.fold-t { --rt: none; } .fold-b { --rb: none; } .fold-l { --rl: none; } .fold-r { --rr: none; }
