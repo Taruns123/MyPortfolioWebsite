@@ -98,6 +98,7 @@ export default function FoldStage() {
   const [flip, setFlip] = useState(false)
   const liveTl = useRef(null) // the live build face's sketch → ship timeline
   const measureRef = useRef(null)
+  const dir = useRef(1) // last scroll direction, for the snap
   const [fits, setFits] = useState(() => FACES.map(() => 1)) // per face: scale needed to fit its panel
   const sizes = sizesFor(dims.W, dims.H)
   const sizesRef = useRef(sizes)
@@ -183,17 +184,20 @@ export default function FoldStage() {
         setF(false)
       } else if (seg.type === 'fold') {
         // fold k: face k → face k+1, after a pause on face k
-        const k = seg.k
         t = afterRest(t)
+        // a fold that has landed is simply the next face at rest
+        const landed = t > 0.998
+        const k = landed ? seg.k + 1 : seg.k
+        if (landed) t = 0
         const folding = t > 0.002
         setI(k)
-        if (FACES[k].draws) liveTl.current?.progress(1)
+        if (FACES[k]?.draws) liveTl.current?.progress(landed ? 0 : 1)
         show(live.current, !folding)
         show(rig.current, folding)
         nap.current.classList.toggle('is-folding', folding)
-        fold(k, folding ? smooth(t) : 0)
+        if (k < FOLDS.length) fold(k, folding ? smooth(t) : 0)
         // the camera follows the half that stays, and zooms in when the napkin gets small
-        const { axis, zoom } = FOLDS[k]
+        const { axis, zoom } = FOLDS[Math.min(k, FOLDS.length - 1)]
         const [w, h] = S[k]
         const c = smooth(clamp((t - 0.12) / 0.88))
         gsap.set(nap.current, {
@@ -257,10 +261,20 @@ export default function FoldStage() {
       end: `+=${STEPS * PER_STEP}%`,
       pin: true,
       scrub: 0.6,
-      // not directional: a small nudge settles back onto the current face instead of turning the page
-      snap: { snapTo: 1 / STEPS, directional: false, duration: { min: 0.3, max: 0.9 }, delay: 0.12, ease: 'power1.inOut' },
+      // Never drag the scroll back: while a face rests, stay exactly where the reader stopped;
+      // once a fold or the envelope has started moving, finish it in the direction of travel.
+      snap: {
+        snapTo: (value) => {
+          const pos = value * STEPS
+          const j = Math.min(Math.floor(pos), STEPS - 1)
+          const t = pos - j
+          if (SEGS[j].type === 'draw' || SEGS[j].type === 'flip' || t <= REST) return value
+          return (dir.current > 0 ? j + 1 : j + REST) / STEPS
+        },
+        duration: { min: 0.3, max: 0.9 }, delay: 0.12, ease: 'power1.inOut',
+      },
       onRefresh: (self) => { measure(); render(self.progress) },
-      onUpdate: (self) => render(self.progress),
+      onUpdate: (self) => { dir.current = self.direction; render(self.progress) },
     })
     measure()
     render(st.progress)
